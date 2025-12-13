@@ -1,0 +1,437 @@
+body {
+  margin: 0;
+  background: #f2f2f2;
+  font-family: Pretendard, sans-serif;
+}
+
+/* Card Styles */
+.card {
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.card-clickable {
+  cursor: pointer;
+  position: relative;
+}
+
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.card-body {
+  flex: 1;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  margin: 0;
+}
+
+.card-memo {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+/* Badge & Tag Styles */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.badge-small {
+  font-size: 11px;
+}
+
+.badge-medium {
+  font-size: 12px;
+}
+
+.category-tag {
+  display: inline-block;
+  background: white;
+  color: black;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-bottom: 8px;
+  border: 1px solid black;
+}
+
+.status-badge {
+  background: #666;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.status-badge.planned {
+  background: #666;
+}
+
+.status-badge.paid {
+  background: #4caf50;
+}
+
+.status-badge.prepaid {
+  background: #ff9800;
+}
+
+/* Dropdown Menu Styles */
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 18px;
+  color: #666;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 4px 0;
+  min-width: 100px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.dropdown-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+.dropdown-item.danger {
+  color: #d32f2f;
+}
+
+.dropdown-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+}
+
+/* Sidebar Styles */
+.sidebar-toggle {
+  position: fixed;
+  top: 6px;
+  z-index: 101;
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: left 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  background: #fff;
+  border-right: 2px solid #000;
+  padding: 24px 16px;
+  z-index: 100;
+  transition: left 0.3s ease;
+}
+
+.sidebar-header {
+  margin-bottom: 32px;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-menu-item {
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 12px 16px;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 400;
+  background: transparent;
+  color: #000;
+}
+
+.sidebar-menu-item.active {
+  background: #000;
+  color: #fff;
+  font-weight: 600;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: transparent;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  animation: slideUp 0.4s ease;
+}
+
+.modal-title {
+  margin-bottom: 16px;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Button Styles */
+button {
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.button-secondary {
+  background: #666;
+}
+
+.button-danger {
+  background: #d32f2f;
+}
+
+.button-small {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.button-transparent {
+  background: transparent;
+  border: none;
+}
+
+/* Input Styles */
+.input, select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid #000;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+/* Layout Styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.flex-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Filter & Toggle Styles */
+.filter-group {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-button {
+  background: #666;
+}
+
+.filter-button.active {
+  background: #000;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* Text Styles */
+.text-muted {
+  color: #666;
+  font-size: 14px;
+}
+
+.text-small {
+  font-size: 12px;
+}
+
+.text-medium {
+  font-size: 14px;
+}
+
+.text-large {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.text-time {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Spacing Utilities */
+.mt-8 {
+  margin-top: 8px;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
+}
+
+.mb-12 {
+  margin-bottom: 12px;
+}
+
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+.mb-24 {
+  margin-bottom: 24px;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+/* Highlight Styles */
+.highlight-badge {
+  background: #f0f0f0;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+/* Expense Specific */
+.expense-amount {
+  margin: 4px 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.expense-detail {
+  margin: 4px 0;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.stats-item-label {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.stats-item-value {
+  margin: 4px 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.stats-item-value.orange {
+  color: #ff9800;
+}
+
+.stats-item-value.green {
+  color: #4caf50;
+}
+
+.stats-item-value.gray {
+  color: #666;
+}
