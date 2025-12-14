@@ -2,26 +2,42 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../supabase'
 import { useNavigate } from 'react-router-dom'
 import TripCard from '../components/TripCard'
+import { useUser } from '../contexts/UserContext';
 
 export default function Home() {
+  const { userId } = useUser()
   const [trips, setTrips] = useState([])
   const [title, setTitle] = useState('')
   const [start, setStart] = useState('')
   const [end, setEnd] = useState('')
   const nav = useNavigate()
 
-  const fetchTrips = async () => {
-    const { data } = await supabase.from('trips').select('*').order('created_at', { ascending: false })
-    setTrips(data)
-  }
-
   useEffect(() => {
-    fetchTrips()
-  }, [])
+    if (!userId) return;
+  
+    const fetchTrips = async () => {
+      if (!userId) return;
+  
+      const { data } = await supabase
+        .from('trips')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+      setTrips(data)
+    }
+  
+    fetchTrips();
+  }, [userId]);
 
   const createTrip = async () => {
+    if (!userId) {
+      alert('오류가 발생했습니다. 잠시후 다시 시도해주세요.')
+      return
+    };
+
     if (!title || !start || !end) return
     await supabase.from('trips').insert({
+      user_id: userId,
       title,
       start_date: start,
       end_date: end

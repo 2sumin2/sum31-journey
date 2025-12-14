@@ -33,14 +33,19 @@ export default function ScheduleCard({ schedule, showMemo = true, onClick, onEdi
             )}
             <h4 className="card-title">{schedule.title}</h4>
           </div>
-          {schedule.category && (
+          {!showMemo && schedule.category && (
             <span className="category-tag">
               {schedule.category}
             </span>
           )}
-          {showMemo && schedule.memo && (
+          {!showMemo && schedule.memo && (
             <p className="card-memo" style={{ color: category?.text_color || '#fff' }}>
               {schedule.memo}
+            </p>
+          )}
+          {!showMemo && schedule.place_address && (
+            <p style={{ fontSize: 14, color: '#555' }}>
+              장소: {schedule.place_name}
             </p>
           )}
         </div>

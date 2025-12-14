@@ -19,7 +19,6 @@ export default function SortablePackingItem({ item, onToggle, onDelete }) {
     <div
       ref={setNodeRef}
       {...attributes}
-      {...listeners}
       className="card"
       style={{
         ...style,
@@ -29,6 +28,15 @@ export default function SortablePackingItem({ item, onToggle, onDelete }) {
       }}
     >
       <div className="flex-row">
+        <button
+          style={{
+            background: '#fff',
+            color: '#000',
+            border: 0,
+            padding: 0,
+          }}
+          {...listeners}
+          >☰</button>
         <input
           type="checkbox"
           checked={item.is_done}

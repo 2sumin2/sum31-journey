@@ -1,11 +1,6 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../supabase'
-import Modal from '../ui/Modal'
-
-const EXPENSE_CATEGORIES = ['숙소', '관광', '액티비티', '식비', '교통', '쇼핑', '기타']
-const PAYMENT_METHODS = ['cash', 'card']
-const PAYMENT_STATUSES = ['planned', 'paid', 'prepaid']
-const RESERVATION_STATUSES = ['none', 'required', 'completed']
+import { supabase } from '../../supabase'
+import Modal from '../../ui/Modal'
 
 export default function ExpenseModal({ tripId, tripDays = [], expense = null, categories = [], exchangeRates = {}, onClose }) {
   const [title, setTitle] = useState('')

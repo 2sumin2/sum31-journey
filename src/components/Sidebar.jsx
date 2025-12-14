@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { supabase } from "../supabase"
+import { useUser } from '../contexts/UserContext';
 
 export default function Sidebar({ tripId }) {
+  const { userName } = useUser()
   const navigate = useNavigate()
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
@@ -16,6 +19,11 @@ export default function Sidebar({ tripId }) {
     { path: `/trip/${tripId}/packing`, label: '준비물' },
     { path: `/trip/${tripId}/settings`, label: '설정' }
   ]
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    navigate('/signin', { replace: true });
+  }
 
   return (
     <>
@@ -43,6 +51,13 @@ export default function Sidebar({ tripId }) {
           boxShadow: isOpen ? '2px 0 8px rgba(0,0,0,0.1)' : 'none'
         }}
       >
+        {userName && 
+          <div className="sidebar-header">
+            <h2>🍀{userName}</h2>
+            <button className="logout-tag" onClick={handleLogout}>
+              logout
+            </button>
+          </div>}
         <div className="sidebar-header">
           <h3>메뉴</h3>
         </div>

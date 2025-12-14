@@ -18,9 +18,7 @@ export default function SortableCategoryCard({ category, onEdit, onDelete }) {
   return (
     <div
       ref={setNodeRef}
-      style={style}
       {...attributes}
-      {...listeners}
       className="card card-content mb-12"
       style={{
         ...style,
@@ -28,6 +26,15 @@ export default function SortableCategoryCard({ category, onEdit, onDelete }) {
       }}
     >
       <div className="flex-row" style={{ flex: 1 }}>
+        <button
+          style={{
+            background: '#fff',
+            color: '#000',
+            border: 0,
+            padding: 0,
+          }}
+          {...listeners}
+          >☰</button>
         <span
           style={{
             background: category.bg_color || '#000000',

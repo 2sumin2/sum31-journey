@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function ExpenseCard({ expense, category, onEdit, onDelete, onClick }) {
+export default function ExpenseCard({ expense, category, onEdit, onDelete, onClick, listeners, showExpenseSimple }) {
   const [showMenu, setShowMenu] = useState(false)
 
   const formatCurrency = (amount, currency) => {
@@ -23,16 +23,26 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
 
   return (
     <div
-      className={`card ${onClick ? 'card-clickable' : ''}`}
-      onClick={onClick}
+    className={`card`}
       style={{
         background: category?.bg_color || '#fff',
         color: category?.text_color || '#000'
       }}
+      onClick={onClick}
     >
       <div className="card-content">
         <div className="card-body">
           <div className="card-header">
+            <button
+              style={{
+                background: category?.bg_color || '#fff',
+                color: category?.text_color || '#000',
+                border: 0,
+                padding: 0,
+              }}
+              className={`${onClick ? 'card-clickable' : ''}`}
+              {...listeners}
+              >☰</button>
             <h4 className="card-title">{expense.title}</h4>
             {getStatusBadge(expense.payment_status)}
             {expense.is_prepaid && (
@@ -41,7 +51,7 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
               </span>
             )}
           </div>
-          {category && (
+          {!showExpenseSimple && category && (
             <span className="category-tag">
               {category.name}
             </span>
@@ -49,21 +59,24 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
           <div className="mt-8">
             <p className="expense-amount">
               {formatCurrency(expense.total_amount_krw, 'KRW')}
+              <span className='currency-info'>
+                {expense.currency !== 'KRW' && '(' + (formatCurrency(expense.unit_amount, expense.currency) + ' x ' + expense.quantity) + ')'}
+              </span>
             </p>
-            {expense.currency !== 'KRW' && (
+            {!showExpenseSimple && expense.currency !== 'KRW' && (
               <p className="expense-detail">
                 {formatCurrency(expense.unit_amount, expense.currency)} × {expense.quantity}
                 {expense.exchange_rate && ` (환율: ${expense.exchange_rate})`}
               </p>
             )}
           </div>
-          {(expense.is_cash || expense.is_card) && (
+          {!showExpenseSimple && (expense.is_cash || expense.is_card) && (
             <p className="text-small text-muted">
               {expense.is_cash && '현금 '}
               {expense.is_card && '카드'}
             </p>
           )}
-          {expense.memo && (
+          {!showExpenseSimple && expense.memo && (
             <p className="card-memo" style={{ color: category?.text_color || '#666' }}>
               {expense.memo}
             </p>

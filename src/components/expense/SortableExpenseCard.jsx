@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import ExpenseCard from './ExpenseCard'
 
-export default function SortableExpenseCard({ expense, category, onEdit, onDelete, onClick }) {
+export default function SortableExpenseCard({ expense, category, onEdit, onDelete, onClick, showExpenseSimple }) {
   const {
     attributes,
     listeners,
@@ -17,13 +17,15 @@ export default function SortableExpenseCard({ expense, category, onEdit, onDelet
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} {...attributes}>
       <ExpenseCard
         expense={expense}
         category={category}
         onEdit={onEdit}
         onDelete={onDelete}
         onClick={onClick}
+        listeners={listeners}
+        showExpenseSimple={showExpenseSimple}
       />
     </div>
   )

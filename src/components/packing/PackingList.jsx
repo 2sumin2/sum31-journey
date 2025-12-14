@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../supabase'
+import { supabase } from '../../supabase'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
-import SortablePackingItem from '../components/SortablePackingItem'
+import SortablePackingItem from './SortablePackingItem'
 
 export default function PackingList({ tripId }) {
   const [items, setItems] = useState([])

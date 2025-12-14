@@ -5,9 +5,11 @@ import Sidebar from '../components/Sidebar'
 import Modal from '../ui/Modal'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
-import SortableCategoryCard from '../components/SortableCategoryCard'
+import SortableCategoryCard from '../components/setting/SortableCategoryCard'
+import { useUser } from '../contexts/UserContext';
 
 export default function Settings() {
+  const { userId } = useUser()
   const { id } = useParams()
   const navigate = useNavigate()
   const [categories, setCategories] = useState([])
@@ -17,28 +19,33 @@ export default function Settings() {
   const [bgColor, setBgColor] = useState('#000000')
   const [textColor, setTextColor] = useState('#ffffff')
 
-  // 카테고리 가져오기 (expense_categories 사용)
-  const fetchCategories = async () => {
-    const { data, error } = await supabase
-      .from('expense_categories')
-      .select('*')
-      .order('display_order', { ascending: true, nullsFirst: true })
-      .order('name', { ascending: true })
+  // 카테고리 가져오기 (categories 사용)
+  useEffect(() => {
+    if (!userId) return;
   
-    if (error) {
-      console.error('categories fetch error', error)
-      setCategories([])
-      return
+    const fetchCategories = async () => {
+      if (!userId) return;
+  
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('user_id', userId)
+        .order('display_order', { ascending: true, nullsFirst: true })
+        .order('name', { ascending: true })
+    
+      if (error) {
+        console.error('categories fetch error', error)
+        setCategories([])
+        return
+      }
+    
+      setCategories(data || [])
     }
   
-    setCategories(data || [])
-  }
-
-  useEffect(() => {
     if (id) {
       fetchCategories()
     }
-  }, [id])
+  }, [userId, id]);
 
   // 드래그 앤 드롭 핸들러
   const handleDragEnd = async (event) => {
@@ -54,19 +61,25 @@ export default function Settings() {
     // DB 업데이트
     newCategories.forEach(async (cat, index) => {
       await supabase
-        .from('expense_categories')
+        .from('categories')
         .update({ display_order: index })
         .eq('id', cat.id)
     })
   }
 
   const handleSaveCategory = async () => {
+    if (!userId) {
+      alert('오류가 발생했습니다. 잠시후 다시 시도해주세요.')
+      return
+    };
+
     if (!categoryName.trim()) {
       alert('카테고리 이름을 입력해주세요.')
       return
     }
 
     const categoryData = {
+      user_id: userId,
       name: categoryName.trim(),
       bg_color: bgColor,
       text_color: textColor
@@ -75,7 +88,7 @@ export default function Settings() {
     if (editingCategory) {
       // 수정
       const { error } = await supabase
-        .from('expense_categories')
+        .from('categories')
         .update(categoryData)
         .eq('id', editingCategory.id)
       
@@ -87,7 +100,7 @@ export default function Settings() {
     } else {
       // 생성
       const { error } = await supabase
-        .from('expense_categories')
+        .from('categories')
         .insert(categoryData)
       
       if (error) {
@@ -117,7 +130,7 @@ export default function Settings() {
     if (!confirm('카테고리를 삭제하시겠습니까?')) return
 
     const { error } = await supabase
-      .from('expense_categories')
+      .from('categories')
       .delete()
       .eq('id', categoryId)
 
@@ -136,9 +149,9 @@ export default function Settings() {
       <div style={{ flex: 1, padding: 24 }}>
         <div className="header">
           <div>
-            <button className="button-secondary" onClick={() => navigate('/')} style={{ marginRight: 12 }}>
-              ← 뒤로
-            </button>
+            <img
+              onClick={() => navigate('/')} 
+              src='/images/home.png' />
             <h2 style={{ display: 'inline' }}>앱 설정</h2>
           </div>
           <button onClick={() => {

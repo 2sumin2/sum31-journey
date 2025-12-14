@@ -1,40 +1,42 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase } from '../supabase'
-import ScheduleCard from '../components/ScheduleCard'
-import ScheduleModal from '../components/ScheduleModal'
-import ExpenseCard from '../components/ExpenseCard'
-import ExpenseModal from '../components/ExpenseModal'
-import SortableExpenseCard from '../components/SortableExpenseCard'
+import ScheduleCard from '../components/schedule/ScheduleCard'
+import ScheduleModal from '../components/schedule/ScheduleModal'
+import ExpenseCard from '../components/expense/ExpenseCard'
+import ExpenseModal from '../components/expense/ExpenseModal'
+import SortableExpenseCard from '../components/expense/SortableExpenseCard'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
-import PackingList from '../components/PackingList'
+import PackingList from '../components/packing/PackingList'
 import Sidebar from '../components/Sidebar'
 import Modal from '../ui/Modal'
+import { useUser } from '../contexts/UserContext';
 
 export default function Trip() {
+  const { userId } = useUser()
   const { id } = useParams()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('schedule')
   const [trip, setTrip] = useState(null)
   const [tripDays, setTripDays] = useState([])
   const [schedules, setSchedules] = useState([])
-  const [scheduleCategories, setScheduleCategories] = useState([])
   const [expenses, setExpenses] = useState([])
-  const [expenseCategories, setExpenseCategories] = useState([])
+  const [categories, setCategories] = useState([])
   const [exchangeRates, setExchangeRates] = useState({})
   const [open, setOpen] = useState(false)
   const [editingSchedule, setEditingSchedule] = useState(null)
   const [expenseOpen, setExpenseOpen] = useState(false)
   const [editingExpense, setEditingExpense] = useState(null)
   const [selectedDate, setSelectedDate] = useState('전체')
-  const [showAllMemos, setShowAllMemos] = useState(true)
+  const [showAllMemos, setShowAllMemos] = useState(false)
   const [selectedSchedule, setSelectedSchedule] = useState(null)
   const [editingHighlight, setEditingHighlight] = useState(null)
   const [highlightValue, setHighlightValue] = useState('')
   const [expenseViewMode, setExpenseViewMode] = useState('day') // 'day' or 'category'
   const [selectedExpenseCategory, setSelectedExpenseCategory] = useState('전체')
   const [showExpenseSimple, setShowExpenseSimple] = useState(false)
+  const [showExpenseCategory, setShowExpenseCategory] = useState(false)
   const [selectedExpense, setSelectedExpense] = useState(null)
   const location = useLocation()
 
@@ -172,20 +174,41 @@ export default function Trip() {
     setSchedules(sorted)
   }
 
-  // 카테고리 가져오기 (expense_categories 사용)
+  // 카테고리 가져오기 (categories 사용)
   const fetchCategories = async () => {
+    if (!userId) return;
+    
     const { data, error } = await supabase
-      .from('expense_categories')
+      .from('categories')
       .select('*')
-      .order('name', { ascending: true })
+      .eq('user_id', userId)
   
     if (error) {
-      console.error('categories fetch error', error)
-      setScheduleCategories([])
+      console.error('expense categories fetch error', error)
+      setCategories([])
       return
     }
   
-    setScheduleCategories(data ?? [])
+    if (!data || data.length === 0) {
+      // 기본 카테고리 생성
+      const defaultCategories = ['숙소', '관광', '액티비티', '식비', '교통', '쇼핑', '기타']
+      const categoriesToInsert = defaultCategories.map(name => ({ name, user_id: userId })); 
+      const { data: inserted, error: insertError } = await supabase
+        .from('categories')
+        .insert(categoriesToInsert)
+        .select()
+      
+      if (insertError) {
+        console.error('create default categories error', insertError)
+        setCategories([])
+        return
+      }
+      
+      setCategories(inserted || [])
+      return
+    }
+  
+    setCategories(data)
   }
 
   // 비용 가져오기
@@ -206,45 +229,14 @@ export default function Trip() {
     setExpenses(data ?? [])
   }
 
-  // 비용 카테고리 가져오기
-  const fetchExpenseCategories = async () => {
-    const { data, error } = await supabase
-      .from('expense_categories')
-      .select('*')
-  
-    if (error) {
-      console.error('expense categories fetch error', error)
-      setExpenseCategories([])
-      return
-    }
-  
-    if (!data || data.length === 0) {
-      // 기본 카테고리 생성
-      const defaultCategories = ['숙소', '관광', '액티비티', '식비', '교통', '쇼핑', '기타']
-      const categoriesToInsert = defaultCategories.map(name => ({ name }))
-      const { data: inserted, error: insertError } = await supabase
-        .from('expense_categories')
-        .insert(categoriesToInsert)
-        .select()
-      
-      if (insertError) {
-        console.error('create default categories error', insertError)
-        setExpenseCategories([])
-        return
-      }
-      
-      setExpenseCategories(inserted || [])
-      return
-    }
-  
-    setExpenseCategories(data)
-  }
-
   // 환율 가져오기
   const fetchExchangeRates = async () => {
+    if (!userId) return;
+
     const { data, error } = await supabase
       .from('exchange_rates')
       .select('*')
+      .eq('user_id', userId)
   
     if (error) {
       console.error('exchange rates fetch error', error)
@@ -273,12 +265,16 @@ export default function Trip() {
     if (id) {
       fetchTrip()
       fetchSchedules()
-      fetchCategories()
       fetchExpenses()
-      fetchExpenseCategories()
-      fetchExchangeRates()
     }
   }, [id])
+
+  useEffect(() => {
+    if (id && userId) {
+      fetchCategories()
+      fetchExchangeRates()
+    }
+  }, [id, userId])
 
   // 일정 삭제
   const handleDelete = async (scheduleId) => {
@@ -453,7 +449,7 @@ export default function Trip() {
                     onClick={() => setSelectedSchedule(schedule)}
                     onEdit={() => handleEdit(schedule)}
                     onDelete={() => handleDelete(schedule.id)}
-                    categories={scheduleCategories}
+                    categories={categories}
                   />
                 ))}
               </div>
@@ -489,7 +485,7 @@ export default function Trip() {
                       onClick={() => setSelectedSchedule(schedule)}
                       onEdit={() => handleEdit(schedule)}
                       onDelete={() => handleDelete(schedule.id)}
-                      categories={scheduleCategories}
+                      categories={categories}
                     />
                   ))}
                 </div>
@@ -578,66 +574,78 @@ export default function Trip() {
 
         {/* 필터 및 간단히 보기 */}
         <div className="filter-group">
-          <div className="flex-row">
-            <button
-              className={`filter-button ${expenseViewMode === 'day' ? 'active' : ''}`}
-              onClick={() => setExpenseViewMode('day')}
-            >
-              일자별
-            </button>
-            <button
-              className={`filter-button ${expenseViewMode === 'category' ? 'active' : ''}`}
-              onClick={() => setExpenseViewMode('category')}
-            >
-              카테고리별
-            </button>
-          </div>
-          {expenseViewMode === 'day' ? (
             <div className="flex-row">
-              <button
-                className={`filter-button ${selectedExpenseCategory === '전체' ? 'active' : ''}`}
-                onClick={() => setSelectedExpenseCategory('전체')}
-              >
-                전체
-              </button>
-              {tripDays.filter(d => d.date !== '1900-01-01').map(day => (
-                <button
-                  key={day.id}
-                  className={`filter-button ${selectedExpenseCategory === day.date ? 'active' : ''}`}
-                  onClick={() => setSelectedExpenseCategory(day.date)}
-                >
-                  {formatDate(day.date)}
-                </button>
-              ))}
-            </div>
-          ) : (
+                <div className="flex-row">
+                    <button
+                    className={`filter-button ${expenseViewMode === 'day' ? 'active' : ''}`}
+                    onClick={() => setExpenseViewMode('day')}
+                    >
+                    일자별
+                    </button>
+                    <button
+                    className={`filter-button ${expenseViewMode === 'category' ? 'active' : ''}`}
+                    onClick={() => setExpenseViewMode('category')}
+                    >
+                    카테고리별
+                    </button>
+                </div>
+                    {expenseViewMode === 'day' ? (
+                        <div className="flex-row">
+                            <button
+                                className={`filter-button ${selectedExpenseCategory === '전체' ? 'active' : ''}`}
+                                onClick={() => setSelectedExpenseCategory('전체')}
+                            >
+                                전체
+                            </button>
+                            {tripDays.filter(d => d.date !== '1900-01-01').map(day => (
+                                <button
+                                key={day.id}
+                                className={`filter-button ${selectedExpenseCategory === day.date ? 'active' : ''}`}
+                                onClick={() => setSelectedExpenseCategory(day.date)}
+                                >
+                                {formatDate(day.date)}
+                                </button>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex-row">
+                            <button
+                                className={`filter-button ${selectedExpenseCategory === '전체' ? 'active' : ''}`}
+                                onClick={() => setSelectedExpenseCategory('전체')}
+                            >
+                                전체
+                            </button>
+                            {categories.map(cat => (
+                                <button
+                                key={cat.id}
+                                className={`filter-button ${selectedExpenseCategory === cat.id ? 'active' : ''}`}
+                                onClick={() => setSelectedExpenseCategory(cat.id)}
+                                >
+                                {cat.name}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+            </div>   
             <div className="flex-row">
-              <button
-                className={`filter-button ${selectedExpenseCategory === '전체' ? 'active' : ''}`}
-                onClick={() => setSelectedExpenseCategory('전체')}
-              >
-                전체
-              </button>
-              {expenseCategories.map(cat => (
-                <button
-                  key={cat.id}
-                  className={`filter-button ${selectedExpenseCategory === cat.id ? 'active' : ''}`}
-                  onClick={() => setSelectedExpenseCategory(cat.id)}
-                >
-                  {cat.name}
-                </button>
-              ))}
+                <label className="toggle-label">
+                    <input
+                    type="checkbox"
+                    checked={showExpenseSimple}
+                    onChange={(e) => setShowExpenseSimple(e.target.checked)}
+                    />
+                    <span>간단히 보기</span>
+                </label>
+                <label className="toggle-label">
+                    <input
+                    type="checkbox"
+                    checked={showExpenseCategory}
+                    onChange={(e) => setShowExpenseCategory(e.target.checked)}
+                    />
+                    <span>카테고리만 보기</span>
+                </label>   
             </div>
-          )}
-          <label className="toggle-label">
-            <input
-              type="checkbox"
-              checked={showExpenseSimple}
-              onChange={(e) => setShowExpenseSimple(e.target.checked)}
-            />
-            <span>간단히 보기</span>
-          </label>
-        </div>        
+        </div>  
 
         {/* 일자별 비용 */}
         {expenseViewMode === 'day' && (
@@ -659,7 +667,7 @@ export default function Trip() {
                         ? `기타 (사전 결제) - ${dayTotal.toLocaleString()}원`
                         : `Day ${day.day_order} - ${formatDate(day.date)} - ${dayTotal.toLocaleString()}원`}
                     </h3>
-                    {!showExpenseSimple && (
+                    {!showExpenseCategory && (
                       <DndContext
                         collisionDetection={closestCenter}
                         onDragEnd={(event) => {
@@ -684,7 +692,7 @@ export default function Trip() {
                       >
                         <SortableContext items={dayExpenses.map(e => e.id)} strategy={verticalListSortingStrategy}>
                           {dayExpenses.map(expense => {
-                            const category = expenseCategories.find(c => c.id === expense.category_id)
+                            const category = categories.find(c => c.id === expense.category_id)
                             return (
                               <SortableExpenseCard
                                 key={expense.id}
@@ -693,6 +701,7 @@ export default function Trip() {
                                 onEdit={() => handleExpenseEdit(expense)}
                                 onDelete={() => handleExpenseDelete(expense.id)}
                                 onClick={() => setSelectedExpense(expense)}
+                                showExpenseSimple={showExpenseSimple}
                               />
                             )
                           })}
@@ -708,7 +717,7 @@ export default function Trip() {
         {/* 카테고리별 비용 */}
         {expenseViewMode === 'category' && (
           <>
-            {expenseCategories
+            {categories
               .filter(cat => {
                 if (selectedExpenseCategory === '전체') return true
                 return cat.id === selectedExpenseCategory
@@ -723,7 +732,7 @@ export default function Trip() {
                     <h3>
                       {cat.name} - {categoryTotal.toLocaleString()}원
                     </h3>
-                    {!showExpenseSimple && (
+                    {!showExpenseCategory && (
                       <DndContext
                         collisionDetection={closestCenter}
                         onDragEnd={(event) => {
@@ -748,7 +757,7 @@ export default function Trip() {
                       >
                         <SortableContext items={categoryExpenses.map(e => e.id)} strategy={verticalListSortingStrategy}>
                           {categoryExpenses.map(expense => {
-                            const category = expenseCategories.find(c => c.id === expense.category_id)
+                            const category = categories.find(c => c.id === expense.category_id)
                             return (
                               <SortableExpenseCard
                                 key={expense.id}
@@ -786,6 +795,11 @@ export default function Trip() {
     return 'schedule'
   }
 
+  const getGoogleMapLink = (place) => {
+    if (!place) return '#';
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}`;
+  }
+
   const currentTab = getCurrentTab()
 
   return (
@@ -794,9 +808,9 @@ export default function Trip() {
       <div style={{ flex: 1, padding: 24 }}>
         <div className="header">
           <div>
-            <button className="button-secondary" onClick={() => navigate('/')} style={{ marginRight: 12 }}>
-              ← 뒤로
-            </button>
+            <img
+                onClick={() => navigate('/')} 
+                src='/images/home.png' />
             <h2 style={{ display: 'inline' }}>{trip?.title || '여행 일정'}</h2>
           </div>
         </div>
@@ -811,7 +825,7 @@ export default function Trip() {
         <ScheduleModal
           tripId={id}
           schedule={editingSchedule}
-          categories={scheduleCategories}
+          categories={categories}
           onClose={() => {
             setOpen(false)
             setEditingSchedule(null)
@@ -827,7 +841,7 @@ export default function Trip() {
           tripId={id}
           tripDays={tripDays}
           expense={editingExpense}
-          categories={expenseCategories}
+          categories={categories}
           exchangeRates={exchangeRates}
           onClose={() => {
             setExpenseOpen(false)
@@ -861,6 +875,18 @@ export default function Trip() {
                 <p style={{ whiteSpace: 'pre-wrap', marginTop: 8 }}>{selectedSchedule.memo2}</p>
               </div>
             )}
+            {selectedSchedule.place_address && (
+              <div>
+                <strong>장소:</strong>
+                <a
+                  href={getGoogleMapLink(selectedSchedule.place_address)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'block', marginTop: 4, color: 'black', textDecoration: 'underline' }}
+                >{selectedSchedule.place_name}
+                </a>
+              </div>
+            )}
             <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
               <button onClick={() => { setSelectedSchedule(null); handleEdit(selectedSchedule) }}>
                 수정
@@ -886,7 +912,7 @@ export default function Trip() {
           <div>
             <input
               className="input"
-              placeholder="하이라이트 (예: 다카야마)"
+              placeholder="하이라이트"
               value={highlightValue}
               onChange={e => setHighlightValue(e.target.value)}
             />
@@ -927,7 +953,7 @@ export default function Trip() {
           <div>
             <p><strong>금액:</strong> {parseFloat(selectedExpense.total_amount_krw || 0).toLocaleString()}원</p>
             {selectedExpense.category_id && (
-              <p><strong>카테고리:</strong> {expenseCategories.find(c => c.id === selectedExpense.category_id)?.name}</p>
+              <p><strong>카테고리:</strong> {categories.find(c => c.id === selectedExpense.category_id)?.name}</p>
             )}
             {selectedExpense.memo && (
               <div>
