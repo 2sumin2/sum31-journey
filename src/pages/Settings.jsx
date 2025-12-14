@@ -154,7 +154,9 @@ export default function Settings() {
               src='/images/home.png' />
             <h2 style={{ display: 'inline' }}>앱 설정</h2>
           </div>
-          <button onClick={() => {
+          <button 
+           className="add-button"
+           onClick={() => {
             setEditingCategory(null)
             setCategoryName('')
             setBgColor('#000000')

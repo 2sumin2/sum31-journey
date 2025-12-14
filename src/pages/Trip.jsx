@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../supabase'
 import ScheduleCard from '../components/schedule/ScheduleCard'
 import ScheduleModal from '../components/schedule/ScheduleModal'
-import ExpenseCard from '../components/expense/ExpenseCard'
 import ExpenseModal from '../components/expense/ExpenseModal'
 import SortableExpenseCard from '../components/expense/SortableExpenseCard'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import PackingList from '../components/packing/PackingList'
+import WordSection from '../components/words/WordSection'
 import Sidebar from '../components/Sidebar'
 import Modal from '../ui/Modal'
 import { useUser } from '../contexts/UserContext';
@@ -24,10 +24,15 @@ export default function Trip() {
   const [expenses, setExpenses] = useState([])
   const [categories, setCategories] = useState([])
   const [exchangeRates, setExchangeRates] = useState({})
+  const [words, setWords] = useState([])
   const [open, setOpen] = useState(false)
   const [editingSchedule, setEditingSchedule] = useState(null)
   const [expenseOpen, setExpenseOpen] = useState(false)
   const [editingExpense, setEditingExpense] = useState(null)
+  const [wordsOpen, setWordsOpen] = useState(false)
+  const [editingWords, setEditingWords] = useState(null)
+  const [wordCategoriesOpen, setWordCategoriesOpen] = useState(false)
+  const [editingWordCategories, setEditingWordCategories] = useState(null)
   const [selectedDate, setSelectedDate] = useState('전체')
   const [showAllMemos, setShowAllMemos] = useState(false)
   const [selectedSchedule, setSelectedSchedule] = useState(null)
@@ -261,11 +266,29 @@ export default function Trip() {
     setExchangeRates(ratesMap)
   }
 
+  // 단어장 가져오기
+  const fetchWords = async () => {
+    const { data, error } = await supabase
+      .from('words')
+      .select('*')
+      .eq('trip_id', id)
+      .order('display_order', { ascending: true })
+  
+    if (error) {
+      console.error('words fetch error', error)
+      setWords([])
+      return
+    }
+  
+    setWords(data ?? [])
+  }
+
   useEffect(() => {
     if (id) {
       fetchTrip()
       fetchSchedules()
       fetchExpenses()
+      fetchWords()
     }
   }, [id])
 
@@ -366,7 +389,7 @@ export default function Trip() {
     <>
       <div className="header">
         <h2 style={{ display: 'inline' }}>여행 일정</h2>
-        <button onClick={() => { setEditingSchedule(null); setOpen(true) }}>
+        <button className="add-button" onClick={() => { setEditingSchedule(null); setOpen(true) }}>
           + 일정
         </button>
       </div>
@@ -536,7 +559,7 @@ export default function Trip() {
       <>
         <div className="header">
           <h2 style={{ display: 'inline' }}>비용 관리</h2>
-          <button onClick={() => { setEditingExpense(null); setExpenseOpen(true) }}>
+          <button className="add-button" onClick={() => { setEditingExpense(null); setExpenseOpen(true) }}>
             + 비용
           </button>
         </div>
@@ -787,10 +810,42 @@ export default function Trip() {
     )
   }
 
+  // 단어장 섹션 렌더링
+  const renderWordsSection = () => {
+    return (
+      <>
+        <div>
+          <div className="header">
+            <h2 style={{ display: 'inline' }}>단어장</h2>
+            <button className="add-button" onClick={() => { setEditingWords(null); setWordsOpen(true) }}>
+              + 단어장
+            </button>
+            {/* <button className="add-button second" onClick={() => { setEditingWordCategories(null); setWordCategoriesOpen(true) }}>
+              + 카테고리
+            </button> */}
+          </div>
+
+          <WordSection tripId={id} categories={categories} 
+            wordsOpen={wordsOpen}
+            editingWords={editingWords}
+            wordCategoriesOpen={wordCategoriesOpen}
+            editingWordCategories={editingWordCategories}
+            onClose={() => {
+              setWordsOpen(false)
+              setEditingWords(null)
+              // fetchWords()
+            }}
+            words={words}/>
+        </div>
+      </>
+    )
+  }
+
   // 현재 탭 결정 (라우팅 기반)
   const getCurrentTab = () => {
     if (location.pathname.includes('/expense')) return 'expense'
     if (location.pathname.includes('/packing')) return 'packing'
+    if (location.pathname.includes('/words')) return 'words'
     if (location.pathname.includes('/settings')) return 'settings'
     return 'schedule'
   }
@@ -819,6 +874,7 @@ export default function Trip() {
         {currentTab === 'schedule' && renderScheduleSection()}
         {currentTab === 'expense' && renderExpenseSection()}
         {currentTab === 'packing' && <PackingList tripId={id} />}
+        {currentTab === 'words' && renderWordsSection()}
 
       {/* 일정 추가/수정 모달 */}
       {open && (

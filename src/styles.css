@@ -287,6 +287,23 @@ button {
   border: none;
 }
 
+.add-button {
+  height: 36px;
+  width: 120px;
+  position: fixed;
+  top: 15px;
+  right: -20px;
+  background: white;
+  color: black;
+  font-weight: 600;
+  padding: 5px 20px;
+  text-align: left;
+}
+
+.add-button.second {
+  top: 60px;
+}
+
 /* Input Styles */
 .input, select {
   width: 100%;

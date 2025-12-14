@@ -17,6 +17,7 @@ export default function Sidebar({ tripId }) {
     { path: `/trip/${tripId}`, label: '일정' },
     { path: `/trip/${tripId}/expense`, label: '비용' },
     { path: `/trip/${tripId}/packing`, label: '준비물' },
+    { path: `/trip/${tripId}/words`, label: '단어장' },
     { path: `/trip/${tripId}/settings`, label: '설정' }
   ]
 
