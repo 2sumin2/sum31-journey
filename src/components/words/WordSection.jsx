@@ -261,7 +261,6 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
 
       {/* 카테고리 관리 */}
       <div className="card" style={{ marginBottom: 16 }}>
-        <h3 style={{ marginTop: 0 }}>카테고리 관리</h3>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
           {wordCategories.map(cat => (
             <div 
@@ -291,17 +290,17 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
               </button>
             </div>
           ))}
+          <button 
+            onClick={() => {
+              setEditingCategory(null)
+              setCategoryName('')
+              setCategoryModalOpen(true)
+            }}
+            style={{ width: 'max-content' }}
+          >
+            + 카테고리 추가
+          </button>
         </div>
-        <button 
-          onClick={() => {
-            setEditingCategory(null)
-            setCategoryName('')
-            setCategoryModalOpen(true)
-          }}
-          style={{ width: '100%' }}
-        >
-          + 카테고리 추가
-        </button>
       </div>
 
       {/* 검색 폼 */}
@@ -344,6 +343,8 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
               categories={wordCategories}
               onDelete={() => deleteWord(word.id)}
               onUpdate={(updatedData) => updateWord(word.id, updatedData)}
+              wordsOpen={wordsOpen}
+              editingWords={editingWords}
             />
           ))}
         </SortableContext>

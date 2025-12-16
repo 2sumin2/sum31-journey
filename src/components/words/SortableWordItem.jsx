@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-export default function SortableWordItem({ word, categories = [], onDelete }) {
+export default function SortableWordItem({ word, categories = [], onDelete, onUpdate, wordsOpen, editingWords }) {
   const {
     attributes,
     listeners,
@@ -63,6 +63,15 @@ export default function SortableWordItem({ word, categories = [], onDelete }) {
             </p>
           )}
         </div>
+        {/* <button
+          className="button-secondary button-small"
+          onClick={(e) => {
+            e.stopPropagation()
+            // onUpdate(word.id)
+          }}
+        >
+          수정
+        </button> */}
         <button
           className="button-danger button-small"
           onClick={(e) => {
