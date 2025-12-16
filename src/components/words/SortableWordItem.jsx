@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-export default function SortableWordItem({ word, onDelete }) {
+export default function SortableWordItem({ word, categories = [], onDelete, onUpdate, wordsOpen, editingWords }) {
   const {
     attributes,
     listeners,
@@ -14,6 +14,9 @@ export default function SortableWordItem({ word, onDelete }) {
     transform: CSS.Transform.toString(transform),
     transition,
   }
+
+  // 카테고리 찾기
+  const category = categories.find(c => c.id === word.category_id)
 
   return (
     <div
@@ -39,19 +42,36 @@ export default function SortableWordItem({ word, onDelete }) {
           ☰
         </button>
         <div style={{ flex: 1 }}>
-          <h4 className="card-title">{word.language}</h4>
-          <span style={{ fontSize: 14, color: '#555' }}>{word.korean}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h4 className="card-title" style={{ margin: 0 }}>{word.language}</h4>
+            {category && (
+              <span style={{ 
+                fontSize: 12, 
+                padding: '2px 8px', 
+                background: '#e0e0e0', 
+                borderRadius: 4,
+                color: '#555'
+              }}>
+                {category.name}
+              </span>
+            )}
+          </div>
+          <span style={{ fontSize: 14, color: '#555', marginTop: 4, display: 'block' }}>{word.korean}</span>
           {word.memo && (
             <p className="text-small text-muted" style={{ margin: '4px 0 0 0' }}>
               {word.memo}
             </p>
           )}
-          {word.category && (
-            <p className="text-small text-muted" style={{ margin: '4px 0 0 0' }}>
-              {word.category}
-            </p>
-          )}
         </div>
+        {/* <button
+          className="button-secondary button-small"
+          onClick={(e) => {
+            e.stopPropagation()
+            // onUpdate(word.id)
+          }}
+        >
+          수정
+        </button> */}
         <button
           className="button-danger button-small"
           onClick={(e) => {
