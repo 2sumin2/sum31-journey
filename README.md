@@ -1,16 +1,66 @@
-# React + Vite
+# Sum31 Journey - 여행 관리 앱
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+여행 계획부터 경비 관리, 준비물 체크, 일정 관리까지 한 곳에서 관리할 수 있는 올인원 여행 관리 애플리케이션입니다.
 
-Currently, two official plugins are available:
+## 주요 기능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🗺️ 여행 관리
+- **여행 생성**: 여행 이름, 시작일, 종료일을 입력하여 새로운 여행 계획을 생성할 수 있습니다.
+- **여행 목록**: 생성한 모든 여행을 한눈에 확인하고 선택할 수 있습니다.
+- **여행 상세 정보**: 각 여행의 상세 정보와 진행 상황을 확인할 수 있습니다.
 
-## React Compiler
+### 📅 일정 관리
+- **일자별 일정**: 여행 기간 동안의 일정을 날짜별로 관리할 수 있습니다.
+- **장소 검색**: 방문할 장소를 검색하고 일정에 추가할 수 있습니다.
+- **일정 추가/수정/삭제**: 각 날짜에 대한 일정을 자유롭게 추가, 수정, 삭제할 수 있습니다.
+- **메모 기능**: 각 일정에 대한 메모를 작성하고 관리할 수 있습니다.
+- **하이라이트**: 각 날짜에 특별한 하이라이트를 설정하여 중요한 일정을 강조할 수 있습니다.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 💰 경비 관리
+- **경비 기록**: 여행 중 발생하는 모든 경비를 기록하고 관리할 수 있습니다.
+- **날짜별/카테고리별 보기**: 경비를 날짜별 또는 카테고리별로 조회할 수 있습니다.
+- **환율 설정**: 외화 경비를 위한 환율을 설정하여 자동 계산할 수 있습니다.
+- **카테고리 분류**: 교통, 식비, 숙박 등 카테고리별로 경비를 분류하여 관리할 수 있습니다.
+- **사전 결제**: 여행 전 미리 결제한 항목들을 '기타 (사전 결제)' 날짜에 기록할 수 있습니다.
+- **드래그 앤 드롭 정렬**: 경비 항목을 드래그하여 원하는 순서로 정렬할 수 있습니다.
+- **간편 보기**: 경비를 간단하게 요약해서 볼 수 있는 모드를 제공합니다.
+- **카테고리별 통계**: 카테고리별 경비 합계와 통계를 확인할 수 있습니다.
 
-## Expanding the ESLint configuration
+### 🎒 준비물 관리
+- **준비물 리스트**: 여행에 필요한 준비물 목록을 작성하고 관리할 수 있습니다.
+- **체크박스 기능**: 준비물을 챙겼는지 체크할 수 있는 체크박스를 제공합니다.
+- **메모 추가**: 각 준비물에 대한 추가 메모를 작성할 수 있습니다.
+- **드래그 앤 드롭 정렬**: 준비물 항목을 드래그하여 원하는 순서로 정렬할 수 있습니다.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 📚 여행 단어장
+- **단어 관리**: 여행지 언어의 유용한 단어와 표현을 저장하고 관리할 수 있습니다.
+- **카테고리 분류**: 단어를 카테고리별로 분류하여 정리할 수 있습니다.
+- **외국어-한국어 쌍**: 외국어 단어와 한국어 뜻을 함께 저장합니다.
+- **메모 기능**: 각 단어에 대한 추가 설명이나 예문을 메모할 수 있습니다.
+- **검색 기능**: 외국어, 한국어, 메모, 카테고리별로 단어를 검색할 수 있습니다.
+- **드래그 앤 드롭 정렬**: 단어 항목을 드래그하여 원하는 순서로 정렬할 수 있습니다.
+
+### ⚙️ 설정
+- **카테고리 관리**: 경비 및 단어장에서 사용할 카테고리를 생성하고 관리할 수 있습니다.
+- **색상 커스터마이징**: 각 카테고리의 배경색과 텍스트 색상을 자유롭게 설정할 수 있습니다.
+- **카테고리 정렬**: 드래그 앤 드롭으로 카테고리의 표시 순서를 변경할 수 있습니다.
+
+### 🔐 사용자 인증
+- **로그인/회원가입**: Supabase 인증을 통한 안전한 사용자 계정 관리
+- **개인 데이터 보호**: 각 사용자의 여행 데이터는 안전하게 분리되어 관리됩니다.
+
+## 기술 스택
+
+- **Frontend**: React + Vite
+- **Database & Auth**: Supabase
+- **Routing**: React Router
+- **Drag & Drop**: @dnd-kit
+- **UI/UX**: Custom CSS with responsive design
+
+## 사용 방법
+
+1. 회원가입 또는 로그인을 합니다.
+2. 홈 화면에서 새로운 여행을 생성합니다.
+3. 생성한 여행을 클릭하여 상세 페이지로 이동합니다.
+4. 사이드바에서 원하는 기능(일정, 경비, 준비물, 단어장, 설정)을 선택합니다.
+5. 각 기능에서 필요한 정보를 추가하고 관리합니다.
