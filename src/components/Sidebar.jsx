@@ -68,7 +68,7 @@ export default function Sidebar({ tripId }) {
             <button
               key={item.path}
               className={`sidebar-menu-item ${isActive(item.path) ? 'active' : ''}`}
-              onClick={() => navigate(item.path)}
+              onClick={() => {navigate(item.path); setIsOpen(false);}}
             >
               {item.label}
             </button>
