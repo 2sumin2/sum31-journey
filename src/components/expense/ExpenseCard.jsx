@@ -15,7 +15,7 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
     }
     const s = statusMap[status] || statusMap.planned
     return (
-      <span className={`status-badge ${s.className}`}>
+      <span className={`badge status-badge ${s.className}`}>
         {s.text}
       </span>
     )
@@ -44,38 +44,45 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
               {...listeners}
               >☰</button>
             <h4 className="card-title">{expense.title}</h4>
-            {getStatusBadge(expense.payment_status)}
-            {expense.is_prepaid && (
+            {/* {expense.is_prepaid && (
               <span className="badge badge-small" style={{ background: '#ff9800', color: '#fff' }}>
                 사전결제
               </span>
-            )}
+            )} */}
           </div>
-          {!showExpenseSimple && category && (
-            <span className="category-tag">
-              {category.name}
-            </span>
+          {!showExpenseSimple && (
+            <div className="badge-box">
+              {getStatusBadge(expense.payment_status)}
+
+              {category && (
+                <span className="badge category-badge">
+                  {category.name}
+                </span>
+              )}
+
+              {expense.is_cash && (
+                <span className="badge cash-badge is-cash">현금</span>
+              )}
+
+              {expense.is_card && (
+                <span className="badge cash-badge is-card">카드</span>
+              )}
+            </div>
           )}
           <div className="mt-8">
             <p className="expense-amount">
               {formatCurrency(expense.total_amount_krw, 'KRW')}
               <span className='currency-info'>
-                {expense.currency !== 'KRW' && '(' + (formatCurrency(expense.unit_amount, expense.currency) + ' x ' + expense.quantity) + ')'}
+                {expense.currency !== 'KRW' && '(' + (formatCurrency(expense.unit_amount, expense.currency) + (expense.quantity > 1 ? ' x' + expense.quantity : '')) + ')'}
               </span>
             </p>
-            {!showExpenseSimple && expense.currency !== 'KRW' && (
+            {/* {!showExpenseSimple && expense.currency !== 'KRW' && (
               <p className="expense-detail">
                 {formatCurrency(expense.unit_amount, expense.currency)} × {expense.quantity}
                 {expense.exchange_rate && ` (환율: ${expense.exchange_rate})`}
               </p>
-            )}
+            )} */}
           </div>
-          {!showExpenseSimple && (expense.is_cash || expense.is_card) && (
-            <p className="text-small text-muted">
-              {expense.is_cash && '현금 '}
-              {expense.is_card && '카드'}
-            </p>
-          )}
           {!showExpenseSimple && expense.memo && (
             <p className="card-memo" style={{ color: category?.text_color || '#666' }}>
               {expense.memo}

@@ -243,6 +243,12 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
           </select>
         </div>
 
+        {/* <div className="chip-group">
+          <button className={paymentStatus==='planned' ? 'active' : ''}>예정</button>
+          <button className={paymentStatus==='paid' ? 'active' : ''}>완료</button>
+          <button className={paymentStatus==='prepaid' ? 'active' : ''}>사전</button>
+        </div> */}
+
         <div style={{ marginBottom: 12 }}>
           <label style={{ display: 'block', marginBottom: 4, fontSize: 14 }}>예약 상태</label>
           <select
@@ -256,14 +262,14 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
           </select>
         </div>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+        {/* <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
           <input
             type="checkbox"
             checked={isPrepaid}
             onChange={e => setIsPrepaid(e.target.checked)}
           />
           <span>사전 결제</span>
-        </label>
+        </label> */}
 
         <textarea
           className="input"
