@@ -24,22 +24,17 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
   return (
     <div
       className={`card`}
-      {...dragListeners}
       style={{
         background: category?.bg_color || '#fff',
         color: category?.text_color || '#000'
       }}
       onClick={onClick}
+      {...dragListeners}
     >
       <div className="card-content">
         <div className="card-body">
           <div className="card-header">
             <h4 className="card-title">{expense.title}</h4>
-            {/* {expense.is_prepaid && (
-              <span className="badge badge-small" style={{ background: '#ff9800', color: '#fff' }}>
-                사전결제
-              </span>
-            )} */}
           </div>
           {!showExpenseSimple && (
             <div className="badge-box">
@@ -67,12 +62,6 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
                 {expense.currency !== 'KRW' && '(' + (formatCurrency(expense.unit_amount, expense.currency) + (expense.quantity > 1 ? ' x' + expense.quantity : '')) + ')'}
               </span>
             </p>
-            {/* {!showExpenseSimple && expense.currency !== 'KRW' && (
-              <p className="expense-detail">
-                {formatCurrency(expense.unit_amount, expense.currency)} × {expense.quantity}
-                {expense.exchange_rate && ` (환율: ${expense.exchange_rate})`}
-              </p>
-            )} */}
           </div>
           {!showExpenseSimple && expense.memo && (
             <p className="card-memo" style={{ color: category?.text_color || '#666' }}>
@@ -106,6 +95,7 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
               </button>
               <button
                 className="dropdown-item danger"
+                onPointerDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation()
                   setShowMenu(false)

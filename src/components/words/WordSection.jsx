@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../supabase'
-import { DndContext, closestCenter } from '@dnd-kit/core'
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import SortableWordItem from './SortableWordItem'
 import Modal from '../../ui/Modal'
@@ -18,6 +18,22 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
   const [categoryName, setCategoryName] = useState('')
   const [editingCategory, setEditingCategory] = useState(null)
   const [editingWordId, setEditingWordId] = useState(null)
+
+  const sensors = useSensors(
+    // PC
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 살짝 움직여야 드래그
+      },
+    }),
+    // 모바일
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250, // 꾹 누르기
+        tolerance: 5,
+      },
+    })
+  )
 
   // 단어 카테고리 가져오기
   const fetchWordCategories = async () => {
@@ -268,11 +284,11 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
               {wordCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
 
-            <div className="modal-form-row">
-              <button onClick={saveWord}>
+            <div className='flex-box'>
+              <button className="main" onClick={saveWord} style={{ flex: 1 }}>
                 {editingWordId ? '수정' : '저장'}
               </button>
-              <button 
+              <button className="sub" style={{ flex: 1 }}
                 onClick={() => {
                   onClose()
                   setLanguage('')
@@ -350,11 +366,11 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
                   onChange={e => setCategoryName(e.target.value)}
                   onKeyPress={e => e.key === 'Enter' && saveCategory()}
                 />
-                <div className="modal-form-row">
-                  <button onClick={saveCategory}>
+                <div className='flex-box'>
+                  <button className="main" onClick={saveCategory} style={{ flex: 1 }}>
                     저장
                   </button>
-                  <button
+                  <button className="sub" style={{ flex: 1 }}
                     onClick={() => {
                       setEditingCategory(null)
                       setCategoryName('')
@@ -400,7 +416,16 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
       </div>
 
       {/* 단어 리스트 */}
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext 
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={() => {
+            // 모바일 진동
+            if (navigator.vibrate) {
+              navigator.vibrate(20)
+            }
+          }} 
+          onDragEnd={handleDragEnd}>
         <SortableContext items={filteredWords.map(w => w.id)} strategy={verticalListSortingStrategy}>
           {filteredWords.map(word => (
             <SortableWordItem

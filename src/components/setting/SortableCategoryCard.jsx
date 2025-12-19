@@ -8,11 +8,14 @@ export default function SortableCategoryCard({ category, onEdit, onDelete }) {
     setNodeRef,
     transform,
     transition,
+    isDragging,
   } = useSortable({ id: category.id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 1000 : 'auto',
   }
 
   return (
@@ -24,17 +27,9 @@ export default function SortableCategoryCard({ category, onEdit, onDelete }) {
         ...style,
         cursor: 'grab'
       }}
+      {...listeners}
     >
       <div className="flex-row" style={{ flex: 1 }}>
-        <button
-          style={{
-            background: '#fff',
-            color: '#000',
-            border: 0,
-            padding: 0,
-          }}
-          {...listeners}
-          >☰</button>
         <span
           style={{
             background: category.bg_color || '#000000',

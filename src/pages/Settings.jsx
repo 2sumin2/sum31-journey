@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../supabase'
 import Sidebar from '../components/Sidebar'
 import Modal from '../ui/Modal'
-import { DndContext, closestCenter } from '@dnd-kit/core'
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import SortableCategoryCard from '../components/setting/SortableCategoryCard'
 import { useUser } from '../contexts/UserContext';
@@ -18,6 +18,22 @@ export default function Settings() {
   const [categoryName, setCategoryName] = useState('')
   const [bgColor, setBgColor] = useState('#000000')
   const [textColor, setTextColor] = useState('#ffffff')
+
+  const sensors = useSensors(
+    // PC
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 살짝 움직여야 드래그
+      },
+    }),
+    // 모바일
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250, // 꾹 누르기
+        tolerance: 5,
+      },
+    })
+  )
 
   // 카테고리 가져오기 (categories 사용)
   useEffect(() => {
@@ -173,7 +189,16 @@ export default function Settings() {
           일정과 비용에서 공통으로 사용되는 카테고리입니다.
         </p>
 
-        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <DndContext 
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={() => {
+            // 모바일 진동
+            if (navigator.vibrate) {
+              navigator.vibrate(20)
+            }
+          }}
+          onDragEnd={handleDragEnd}>
           <SortableContext items={categories.map(c => c.id)} strategy={verticalListSortingStrategy}>
             {categories.map(category => (
               <SortableCategoryCard
@@ -263,21 +288,18 @@ export default function Settings() {
               미리보기: {categoryName || '카테고리 이름'}
             </div>
 
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={handleSaveCategory} style={{ flex: 1 }}>
+            <div className='flex-box'>
+              <button className="main" onClick={handleSaveCategory} style={{ flex: 1 }}>
                 {editingCategory ? '수정' : '저장'}
               </button>
-              <button
+              <button className="sub" style={{ flex: 1 }}
                 onClick={() => {
                   setShowCategoryModal(false)
                   setEditingCategory(null)
                   setCategoryName('')
                   setBgColor('#000000')
                   setTextColor('#ffffff')
-                }}
-                className="button-secondary"
-                style={{ flex: 1 }}
-              >
+                }}>
                 취소
               </button>
             </div>

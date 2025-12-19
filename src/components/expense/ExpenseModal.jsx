@@ -163,7 +163,7 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
         </select>
 
         <div>
-          <label style={{ display: 'block', marginBottom: 4, fontSize: 14 }}>일자</label>
+          <label>일자</label>
           <select
             className="input"
             value={tripDayId}
@@ -180,28 +180,26 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
           </select>
         </div>
 
-        <div style={{ display: 'flex', gap: 8, fontSize: '13px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <div className="flex-box">
+          <label>
             <input
               type="checkbox"
               checked={isCash}
               onChange={e => setIsCash(e.target.checked)}
-              style={{ minHeight: '0'}}
             />
             <span>현금</span>
           </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <label>
             <input
               type="checkbox"
               checked={isCard}
               onChange={e => setIsCard(e.target.checked)}
-              style={{ minHeight: '0'}}
             />
             <span>카드</span>
           </label>
         </div>
 
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className='flex-box'>
           <select
             className="input"
             value={currency}
@@ -233,7 +231,7 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
         </div>
 
         {currency !== 'KRW' && (
-          <div style={{ marginBottom: 6 }}>
+          <div className='modal-item-box'>
             <input
               className="input"
               type="number"
@@ -241,30 +239,20 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
               value={exchangeRate}
               onChange={e => setExchangeRate(e.target.value)}
             />
-            <p style={{ fontSize: 12, color: '#666', margin: '4px 0' }}>
+            <p>
               총액 (원화): {parseFloat(totalAmountKrw || 0).toLocaleString()}원
             </p>
           </div>
         )}
 
-        <div style={{ marginBottom: 6 }}>
-          <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>결제 상태</label>
+        <div className='modal-item-box'>
+          <label>결제 상태</label>
           <div style={{ display: 'flex', gap: 8 }}>
             {['planned', 'paid', 'prepaid'].map(status => (
               <button
                 key={status}
                 onClick={() => setPaymentStatus(status)}
-                style={{
-                  flex: 1,
-                  padding: '10px 12px',
-                  background: paymentStatus === status ? '#000' : '#f0f0f0',
-                  color: paymentStatus === status ? '#fff' : '#000',
-                  border: '2px solid ' + (paymentStatus === status ? '#000' : '#ddd'),
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  fontWeight: paymentStatus === status ? 'bold' : 'normal'
-                }}
+                className={`chip-button ${paymentStatus === status ? 'active' : ''}`}
               >
                 {status === 'planned' && '예정'}
                 {status === 'paid' && '완료'}
@@ -274,24 +262,14 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
           </div>
         </div>
 
-        <div style={{ marginBottom: 6 }}>
-          <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>예약 상태</label>
+        <div className='modal-item-box'>
+          <label>예약 상태</label>
           <div style={{ display: 'flex', gap: 8 }}>
             {['none', 'required', 'completed'].map(status => (
               <button
                 key={status}
                 onClick={() => setReservationStatus(status)}
-                style={{
-                  flex: 1,
-                  padding: '10px 12px',
-                  background: reservationStatus === status ? '#000' : '#f0f0f0',
-                  color: reservationStatus === status ? '#fff' : '#000',
-                  border: '2px solid ' + (reservationStatus === status ? '#000' : '#ddd'),
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  fontWeight: reservationStatus === status ? 'bold' : 'normal'
-                }}
+                className={`chip-button ${reservationStatus === status ? 'active' : ''}`}
               >
                 {status === 'none' && '없음'}
                 {status === 'required' && '필요'}
@@ -300,15 +278,6 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
             ))}
           </div>
         </div>
-
-        {/* <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-          <input
-            type="checkbox"
-            checked={isPrepaid}
-            onChange={e => setIsPrepaid(e.target.checked)}
-          />
-          <span>사전 결제</span>
-        </label> */}
 
         <textarea
           className="input"
@@ -326,11 +295,11 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
           rows={3}
         />
 
-        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-          <button onClick={save} style={{ flex: 1 }}>
+        <div className='flex-box'>
+          <button className="main" onClick={save} style={{ flex: 1 }}>
             {expense ? '수정' : '저장'}
           </button>
-          <button onClick={onClose} style={{ flex: 1, background: '#666' }}>
+          <button className="sub" onClick={onClose} style={{ flex: 1 }}>
             취소
           </button>
         </div>

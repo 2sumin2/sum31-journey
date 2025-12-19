@@ -114,8 +114,8 @@ export default function ScheduleModal({ tripId, schedule = null, categories = []
             onChange={e => setDate(e.target.value)}
           />
           
-          <div style={{ marginBottom: 12 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <div className='modal-item-box'>
+            <label>
               <input
                 type="checkbox"
                 checked={useTimeRange}
@@ -124,7 +124,7 @@ export default function ScheduleModal({ tripId, schedule = null, categories = []
               <span>시간 범위 사용</span>
             </label>
             {useTimeRange ? (
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div className='flex-box'>
                 <input
                   className="input"
                   type="time"
@@ -192,7 +192,7 @@ export default function ScheduleModal({ tripId, schedule = null, categories = []
             </button>
 
             {selectedPlace && (
-              <p style={{ fontSize: 14, color: '#333' }}>
+              <p>
                 등록된 장소: {selectedPlace.address}
               </p>
             )}
@@ -217,11 +217,11 @@ export default function ScheduleModal({ tripId, schedule = null, categories = []
           /></>
         )}
         
-        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-          <button onClick={save} style={{ flex: 1 }}>
+        <div className='flex-box'>
+          <button className="main" onClick={save} style={{ flex: 1 }}>
             {schedule ? '수정' : '저장'}
           </button>
-          <button onClick={onClose} style={{ flex: 1, background: '#666' }}>
+          <button className="sub" onClick={onClose} style={{ flex: 1 }}>
             취소
           </button>
         </div>

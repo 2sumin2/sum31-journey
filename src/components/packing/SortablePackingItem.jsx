@@ -10,11 +10,14 @@ export default function SortablePackingItem({ item, onToggle, onDelete, onEdit }
     setNodeRef,
     transform,
     transition,
+    isDragging,
   } = useSortable({ id: item.id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 1000 : 'auto',
   }
 
   return (
@@ -28,17 +31,9 @@ export default function SortablePackingItem({ item, onToggle, onDelete, onEdit }
         textDecoration: item.is_done ? 'line-through' : 'none',
         cursor: 'grab'
       }}
+      {...listeners}
     >
       <div className="flex-row">
-        <button
-          style={{
-            background: '#fff',
-            color: '#000',
-            border: 0,
-            padding: 0,
-          }}
-          {...listeners}
-          >☰</button>
         <input
           type="checkbox"
           checked={item.is_done}
@@ -54,72 +49,34 @@ export default function SortablePackingItem({ item, onToggle, onDelete, onEdit }
           )}
         </div>
         <div 
-          style={{ position: 'relative' }}
+          className="dropdown-container"
+          onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation()
             setShowMenu(!showMenu)
           }}
         >
-          <button
-            style={{
-              background: 'transparent',
-              border: 'none',
-              fontSize: 20,
-              cursor: 'pointer',
-              padding: '4px 8px',
-              color: '#666'
-            }}
-          >
+          <button className="dropdown-button">
             ⋮
           </button>
           {showMenu && (
-            <div
-              style={{
-                position: 'absolute',
-                right: 0,
-                top: '100%',
-                background: '#fff',
-                border: '1px solid #ddd',
-                borderRadius: 8,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                zIndex: 100,
-                minWidth: 100
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}>
               <button
+                className="dropdown-item"
+                onPointerDown={(e) => e.stopPropagation()}
                 onClick={() => {
                   onEdit(item)
                   setShowMenu(false)
-                }}
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '10px 16px',
-                  border: 'none',
-                  background: 'transparent',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  fontSize: 14
                 }}
               >
                 수정
               </button>
               <button
+                className="dropdown-item danger"
+                onPointerDown={(e) => e.stopPropagation()}
                 onClick={() => {
                   onDelete(item.id)
                   setShowMenu(false)
-                }}
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '10px 16px',
-                  border: 'none',
-                  background: 'transparent',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  fontSize: 14,
-                  color: '#d32f2f'
                 }}
               >
                 삭제

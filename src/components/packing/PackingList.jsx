@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../supabase'
-import { DndContext, closestCenter } from '@dnd-kit/core'
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import SortablePackingItem from './SortablePackingItem'
 import Modal from '../../ui/Modal'
@@ -11,6 +11,22 @@ export default function PackingList({ tripId }) {
   const [memo, setMemo] = useState('')
   const [itemModalOpen, setItemModalOpen] = useState(false)
   const [editingItemId, setEditingItemId] = useState(null)
+
+  const sensors = useSensors(
+    // PC
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 살짝 움직여야 드래그
+      },
+    }),
+    // 모바일
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250, // 꾹 누르기
+        tolerance: 5,
+      },
+    })
+  )
 
   const fetchItems = async () => {
     const { data, error } = await supabase
@@ -180,17 +196,18 @@ export default function PackingList({ tripId }) {
               onChange={e => setMemo(e.target.value)}
               onKeyPress={e => e.key === 'Enter' && addItem()}
             />
-            <div className="modal-form-row">
-              <button onClick={addItem}>
+            <div className='flex-box'>
+              <button className="main" onClick={addItem} style={{ flex: 1 }}>
                 {editingItemId ? '수정' : '저장'}
               </button>
-              <button 
+              <button className="sub"
                 onClick={() => {
                   setItemModalOpen(false)
                   setName('')
                   setMemo('')
                   setEditingItemId(null)
                 }}
+                style={{ flex: 1 }}
               >
                 취소
               </button>
@@ -199,7 +216,16 @@ export default function PackingList({ tripId }) {
         </Modal>
       )}
 
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext 
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={() => {
+            // 모바일 진동
+            if (navigator.vibrate) {
+              navigator.vibrate(20)
+            }
+          }}
+          onDragEnd={handleDragEnd}>
         <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
           {items.map(item => (
             <SortablePackingItem
