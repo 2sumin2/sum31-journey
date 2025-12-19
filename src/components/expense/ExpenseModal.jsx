@@ -162,7 +162,7 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
           ))}
         </select>
 
-        <div style={{ marginBottom: 12 }}>
+        <div>
           <label style={{ display: 'block', marginBottom: 4, fontSize: 14 }}>일자</label>
           <select
             className="input"
@@ -180,12 +180,13 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
           </select>
         </div>
 
-        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+        <div style={{ display: 'flex', gap: 8, fontSize: '13px' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <input
               type="checkbox"
               checked={isCash}
               onChange={e => setIsCash(e.target.checked)}
+              style={{ minHeight: '0'}}
             />
             <span>현금</span>
           </label>
@@ -194,12 +195,13 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
               type="checkbox"
               checked={isCard}
               onChange={e => setIsCard(e.target.checked)}
+              style={{ minHeight: '0'}}
             />
             <span>카드</span>
           </label>
         </div>
 
-        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+        <div style={{ display: 'flex', gap: 8 }}>
           <select
             className="input"
             value={currency}
@@ -231,7 +233,7 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
         </div>
 
         {currency !== 'KRW' && (
-          <div style={{ marginBottom: 12 }}>
+          <div style={{ marginBottom: 6 }}>
             <input
               className="input"
               type="number"
@@ -245,7 +247,7 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
           </div>
         )}
 
-        <div style={{ marginBottom: 12 }}>
+        <div style={{ marginBottom: 6 }}>
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>결제 상태</label>
           <div style={{ display: 'flex', gap: 8 }}>
             {['planned', 'paid', 'prepaid'].map(status => (
@@ -272,7 +274,7 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
           </div>
         </div>
 
-        <div style={{ marginBottom: 12 }}>
+        <div style={{ marginBottom: 6 }}>
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>예약 상태</label>
           <div style={{ display: 'flex', gap: 8 }}>
             {['none', 'required', 'completed'].map(status => (

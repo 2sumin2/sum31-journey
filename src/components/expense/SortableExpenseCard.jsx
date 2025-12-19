@@ -9,11 +9,14 @@ export default function SortableExpenseCard({ expense, category, onEdit, onDelet
     setNodeRef,
     transform,
     transition,
+    isDragging,
   } = useSortable({ id: expense.id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 1000 : 'auto',
   }
 
   return (
@@ -26,6 +29,7 @@ export default function SortableExpenseCard({ expense, category, onEdit, onDelet
         onClick={onClick}
         listeners={listeners}
         showExpenseSimple={showExpenseSimple}
+        dragListeners={listeners}
       />
     </div>
   )

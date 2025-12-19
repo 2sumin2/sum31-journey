@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function ExpenseCard({ expense, category, onEdit, onDelete, onClick, listeners, showExpenseSimple }) {
+export default function ExpenseCard({ expense, category, onEdit, onDelete, onClick, dragListeners, showExpenseSimple }) {
   const [showMenu, setShowMenu] = useState(false)
 
   const formatCurrency = (amount, currency) => {
@@ -23,7 +23,8 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
 
   return (
     <div
-    className={`card`}
+      className={`card`}
+      {...dragListeners}
       style={{
         background: category?.bg_color || '#fff',
         color: category?.text_color || '#000'
@@ -33,16 +34,6 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
       <div className="card-content">
         <div className="card-body">
           <div className="card-header">
-            <button
-              style={{
-                background: category?.bg_color || '#fff',
-                color: category?.text_color || '#000',
-                border: 0,
-                padding: 0,
-              }}
-              className={`${onClick ? 'card-clickable' : ''}`}
-              {...listeners}
-              >☰</button>
             <h4 className="card-title">{expense.title}</h4>
             {/* {expense.is_prepaid && (
               <span className="badge badge-small" style={{ background: '#ff9800', color: '#fff' }}>
@@ -91,6 +82,7 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
         </div>
         <div 
           className="dropdown-container"
+          onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation()
             setShowMenu(!showMenu)
@@ -103,6 +95,7 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
             <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}>
               <button
                 className="dropdown-item"
+                onPointerDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation()
                   setShowMenu(false)

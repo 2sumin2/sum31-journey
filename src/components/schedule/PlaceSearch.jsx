@@ -64,6 +64,7 @@ export default function PlaceSearch({ tripId, onSuccess }) {
       >
         <input
           type="text"
+          className='input'
           placeholder="장소/주소 검색"
           style={{ width: 240, padding: 8, marginBottom: 8 }}
           value={query}

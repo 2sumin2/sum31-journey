@@ -1,5 +1,5 @@
 import { supabase } from '../../supabase'
-import { DndContext, closestCenter } from '@dnd-kit/core'
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import SortableExpenseCard from '../expense/SortableExpenseCard'
 
@@ -29,6 +29,21 @@ export default function ExpenseSection({
 }) {
   const stats = calculateExpenseStats()
   const filteredExpenses = getFilteredExpenses(tripDays)
+  const sensors = useSensors(
+    // PC
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 살짝 움직여야 드래그
+      },
+    }),
+    // 모바일
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250, // 꾹 누르기
+        tolerance: 5,
+      },
+    })
+  )
 
   return (
     <>
@@ -167,7 +182,14 @@ export default function ExpenseSection({
                   </h3>
                   {!showExpenseCategory && (
                     <DndContext
+                      sensors={sensors}
                       collisionDetection={closestCenter}
+                      onDragStart={() => {
+                        // 모바일 진동
+                        if (navigator.vibrate) {
+                          navigator.vibrate(20)
+                        }
+                      }}
                       onDragEnd={(event) => {
                         const { active, over } = event
                         if (!over || active.id === over.id) return
