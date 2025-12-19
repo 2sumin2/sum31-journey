@@ -1,7 +1,9 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { useState } from 'react'
 
-export default function SortableWordItem({ word, categories = [], onDelete, onUpdate, wordsOpen, editingWords }) {
+export default function SortableWordItem({ word, categories = [], onDelete, onUpdate, onEdit, wordsOpen, editingWords }) {
+  const [showMenu, setShowMenu] = useState(false)
   const {
     attributes,
     listeners,
@@ -63,24 +65,80 @@ export default function SortableWordItem({ word, categories = [], onDelete, onUp
             </p>
           )}
         </div>
-        {/* <button
-          className="button-secondary button-small"
+        <div 
+          style={{ position: 'relative' }}
           onClick={(e) => {
             e.stopPropagation()
-            // onUpdate(word.id)
+            setShowMenu(!showMenu)
           }}
         >
-          수정
-        </button> */}
-        <button
-          className="button-danger button-small"
-          onClick={(e) => {
-            e.stopPropagation()
-            onDelete(word.id)
-          }}
-        >
-          삭제
-        </button>
+          <button
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontSize: 20,
+              cursor: 'pointer',
+              padding: '4px 8px',
+              color: '#666'
+            }}
+          >
+            ⋮
+          </button>
+          {showMenu && (
+            <div
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: '100%',
+                background: '#fff',
+                border: '1px solid #ddd',
+                borderRadius: 8,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                zIndex: 100,
+                minWidth: 100
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => {
+                  onEdit(word)
+                  setShowMenu(false)
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '10px 16px',
+                  border: 'none',
+                  background: 'transparent',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  fontSize: 14
+                }}
+              >
+                수정
+              </button>
+              <button
+                onClick={() => {
+                  onDelete(word.id)
+                  setShowMenu(false)
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '10px 16px',
+                  border: 'none',
+                  background: 'transparent',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  color: '#d32f2f'
+                }}
+              >
+                삭제
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

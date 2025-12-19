@@ -3,11 +3,14 @@ import { supabase } from '../../supabase'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import SortablePackingItem from './SortablePackingItem'
+import Modal from '../../ui/Modal'
 
 export default function PackingList({ tripId }) {
   const [items, setItems] = useState([])
   const [name, setName] = useState('')
   const [memo, setMemo] = useState('')
+  const [itemModalOpen, setItemModalOpen] = useState(false)
+  const [editingItemId, setEditingItemId] = useState(null)
 
   const fetchItems = async () => {
     const { data, error } = await supabase
@@ -55,24 +58,52 @@ export default function PackingList({ tripId }) {
   const addItem = async () => {
     if (!name.trim()) return
 
-    const { error } = await supabase
-      .from('packing_items')
-      .insert({
-        trip_id: tripId,
-        name: name.trim(),
-        memo: memo.trim() || null,
-        is_done: false
-      })
+    if (editingItemId) {
+      // 수정
+      const { error } = await supabase
+        .from('packing_items')
+        .update({
+          name: name.trim(),
+          memo: memo.trim() || null
+        })
+        .eq('id', editingItemId)
 
-    if (error) {
-      console.error('add item error', error)
-      alert('준비물 추가에 실패했습니다.')
-      return
+      if (error) {
+        console.error('update item error', error)
+        alert('준비물 수정에 실패했습니다.')
+        return
+      }
+    } else {
+      // 추가
+      const { error } = await supabase
+        .from('packing_items')
+        .insert({
+          trip_id: tripId,
+          name: name.trim(),
+          memo: memo.trim() || null,
+          is_done: false
+        })
+
+      if (error) {
+        console.error('add item error', error)
+        alert('준비물 추가에 실패했습니다.')
+        return
+      }
     }
 
     setName('')
     setMemo('')
+    setEditingItemId(null)
+    setItemModalOpen(false)
     fetchItems()
+  }
+
+  // 준비물 수정 시작
+  const startEditItem = (item) => {
+    setEditingItemId(item.id)
+    setName(item.name)
+    setMemo(item.memo || '')
+    setItemModalOpen(true)
   }
 
   const toggleDone = async (itemId, currentStatus) => {
@@ -107,25 +138,66 @@ export default function PackingList({ tripId }) {
 
   return (
     <div>
-      <h3>준비물 리스트</h3>
-      
-      <div className="card" style={{ marginBottom: 16 }}>
-        <input
-          className="input"
-          placeholder="준비물 이름"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          onKeyPress={e => e.key === 'Enter' && addItem()}
-        />
-        <input
-          className="input"
-          placeholder="메모 (선택)"
-          value={memo}
-          onChange={e => setMemo(e.target.value)}
-          onKeyPress={e => e.key === 'Enter' && addItem()}
-        />
-        <button onClick={addItem}>추가</button>
+      <div className="header">
+        <h2 style={{ display: 'inline' }}>준비물</h2>
+        <button
+          className="add-button"
+          onClick={() => {
+            setEditingItemId(null)
+            setName('')
+            setMemo('')
+            setItemModalOpen(true)
+          }}
+        >
+          + 준비물
+        </button>
       </div>
+
+      {/* 준비물 추가/수정 모달 */}
+      {itemModalOpen && (
+        <Modal
+          open={true}
+          onClose={() => {
+            setItemModalOpen(false)
+            setName('')
+            setMemo('')
+            setEditingItemId(null)
+          }}
+          title={editingItemId ? '준비물 수정' : '준비물 추가'}
+        >
+          <div>
+            <input
+              className="input"
+              placeholder="준비물 이름"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              onKeyPress={e => e.key === 'Enter' && addItem()}
+            />
+            <input
+              className="input"
+              placeholder="메모 (선택)"
+              value={memo}
+              onChange={e => setMemo(e.target.value)}
+              onKeyPress={e => e.key === 'Enter' && addItem()}
+            />
+            <div className="modal-form-row">
+              <button onClick={addItem}>
+                {editingItemId ? '수정' : '저장'}
+              </button>
+              <button 
+                onClick={() => {
+                  setItemModalOpen(false)
+                  setName('')
+                  setMemo('')
+                  setEditingItemId(null)
+                }}
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
 
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
@@ -135,13 +207,14 @@ export default function PackingList({ tripId }) {
               item={item}
               onToggle={toggleDone}
               onDelete={deleteItem}
+              onEdit={startEditItem}
             />
           ))}
         </SortableContext>
       </DndContext>
 
       {items.length === 0 && (
-        <p style={{ textAlign: 'center', color: '#666', padding: 24 }}>
+        <p className="empty-state">
           준비물을 추가해주세요.
         </p>
       )}

@@ -170,6 +170,9 @@ export default function Trip() {
               <button className="add-button" onClick={() => { setEditingWords(null); setWordsOpen(true) }}>
                 + 단어장
               </button>
+              <button className="add-button second" onClick={() => setWordCategoriesOpen(true)}>
+                카테고리
+              </button>
             </div>
             <WordSection 
               tripId={id} 
@@ -182,6 +185,8 @@ export default function Trip() {
                 setWordsOpen(false)
                 setEditingWords(null)
               }}
+              onEditWord={() => setWordsOpen(true)}
+              onCategoryModalClose={() => setWordCategoriesOpen(false)}
               words={words}
             />
           </div>

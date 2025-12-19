@@ -170,7 +170,7 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
   const saveCategory = async () => {
     if (!categoryName.trim()) return alert('카테고리 이름을 입력해주세요.')
 
-    if (editingCategory && editingCategory.id) {
+    if (editingCategory) {
       // 수정
       const { error } = await supabase
         .from('word_categories')
@@ -268,8 +268,8 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
               {wordCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
 
-            <div className="modal-form-row">
-              <button onClick={saveWord}>
+            <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+              <button onClick={saveWord} style={{ flex: 1 }}>
                 {editingWordId ? '수정' : '저장'}
               </button>
               <button 
@@ -280,7 +280,8 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
                   setMemo('')
                   setCategoryId('')
                   setEditingWordId(null)
-                }}
+                }} 
+                style={{ flex: 1, background: '#666' }}
               >
                 취소
               </button>
@@ -306,23 +307,34 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
                 {/* 카테고리 목록 */}
                 <div style={{ marginBottom: 16 }}>
                   {wordCategories.length === 0 ? (
-                    <p className="category-empty-msg">
+                    <p style={{ fontSize: 12, color: '#999', margin: 0, marginBottom: 12 }}>
                       등록된 카테고리가 없습니다.
                     </p>
                   ) : (
-                    <div className="category-list">
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
                       {wordCategories.map(cat => (
-                        <div key={cat.id} className="category-item">
+                        <div
+                          key={cat.id}
+                          style={{
+                            padding: '8px 12px',
+                            background: '#f0f0f0',
+                            borderRadius: 8,
+                            display: 'flex',
+                            gap: 8,
+                            alignItems: 'center',
+                            fontSize: 12
+                          }}
+                        >
                           <span>{cat.name}</span>
                           <button
-                            className="category-edit-btn"
                             onClick={() => startEditCategory(cat)}
+                            style={{ padding: '0px 4px', fontSize: 11, height: 'auto', background: 'transparent', color: '#666', border: 'none', cursor: 'pointer' }}
                           >
                             ✎
                           </button>
                           <button
-                            className="category-delete-btn"
                             onClick={() => deleteCategory(cat.id)}
+                            style={{ padding: '0px 4px', fontSize: 11, height: 'auto', background: 'transparent', color: '#d32f2f', border: 'none', cursor: 'pointer' }}
                           >
                             ✕
                           </button>
@@ -350,8 +362,8 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
                   onChange={e => setCategoryName(e.target.value)}
                   onKeyPress={e => e.key === 'Enter' && saveCategory()}
                 />
-                <div className="modal-form-row">
-                  <button onClick={saveCategory}>
+                <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+                  <button onClick={saveCategory} style={{ flex: 1 }}>
                     저장
                   </button>
                   <button
@@ -359,6 +371,7 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
                       setEditingCategory(null)
                       setCategoryName('')
                     }}
+                    style={{ flex: 1, background: '#666' }}
                   >
                     취소
                   </button>
@@ -370,8 +383,8 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
       )}
 
       {/* 검색 폼 */}
-      <div className="search-form">
-        <select value={searchField} onChange={e => setSearchField(e.target.value)}>
+      <div className="card" style={{ marginBottom: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
+        <select value={searchField} onChange={e => setSearchField(e.target.value)} style={{width:'max-content'}}>
           <option value="korean">한국어</option>
           <option value="language">외국어</option>
           <option value="memo">메모</option>
@@ -396,7 +409,7 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
             onKeyPress={e => e.key === 'Enter' && handleSearch()}
           />
         )}
-        <button onClick={handleSearch}>검색</button>
+        <button style={{textWrapMode: 'nowrap', height: '43px'}} onClick={handleSearch}>검색</button>
       </div>
 
       {/* 단어 리스트 */}
@@ -420,7 +433,7 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
       </DndContext>
 
       {filteredWords.length === 0 && (
-        <p className="empty-state">
+        <p style={{ textAlign: 'center', color: '#666', padding: 24 }}>
           단어를 추가해주세요.
         </p>
       )}

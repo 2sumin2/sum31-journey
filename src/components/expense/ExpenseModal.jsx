@@ -52,12 +52,22 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
   // 환율 적용 계산
   useEffect(() => {
     if (unitAmount && currency && exchangeRates[currency]) {
-      const rate = exchangeRate || exchangeRates[currency].rate_to_krw
+      let rate = exchangeRate || exchangeRates[currency].rate_to_krw
+      
+      // 로컬 스토리지에 저장된 환율 확인
+      if (!exchangeRate) {
+        const savedRate = localStorage.getItem(`exchangeRate_${currency}`)
+        if (savedRate) {
+          rate = parseFloat(savedRate)
+          setExchangeRate(rate.toString())
+        } else {
+          rate = exchangeRates[currency].rate_to_krw
+          setExchangeRate(rate.toString())
+        }
+      }
+      
       const total = parseFloat(unitAmount) * quantity * rate
       setTotalAmountKrw(total.toFixed(2))
-      if (!exchangeRate) {
-        setExchangeRate(rate.toString())
-      }
     } else if (currency === 'KRW' && unitAmount) {
       const total = parseFloat(unitAmount) * quantity
       setTotalAmountKrw(total.toFixed(2))
@@ -69,6 +79,11 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
     if (!title || !categoryId) {
       alert('제목과 분류를 입력해주세요.')
       return
+    }
+
+    // 환율 저장
+    if (exchangeRate && currency !== 'KRW') {
+      localStorage.setItem(`exchangeRate_${currency}`, exchangeRate)
     }
 
     const expenseData = {
@@ -231,35 +246,57 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
         )}
 
         <div style={{ marginBottom: 12 }}>
-          <label style={{ display: 'block', marginBottom: 4, fontSize: 14 }}>결제 상태</label>
-          <select
-            className="input"
-            value={paymentStatus}
-            onChange={e => setPaymentStatus(e.target.value)}
-          >
-            <option value="planned">예정</option>
-            <option value="paid">결제 완료</option>
-            <option value="prepaid">사전 결제</option>
-          </select>
+          <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>결제 상태</label>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {['planned', 'paid', 'prepaid'].map(status => (
+              <button
+                key={status}
+                onClick={() => setPaymentStatus(status)}
+                style={{
+                  flex: 1,
+                  padding: '10px 12px',
+                  background: paymentStatus === status ? '#000' : '#f0f0f0',
+                  color: paymentStatus === status ? '#fff' : '#000',
+                  border: '2px solid ' + (paymentStatus === status ? '#000' : '#ddd'),
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: paymentStatus === status ? 'bold' : 'normal'
+                }}
+              >
+                {status === 'planned' && '예정'}
+                {status === 'paid' && '완료'}
+                {status === 'prepaid' && '사전'}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* <div className="chip-group">
-          <button className={paymentStatus==='planned' ? 'active' : ''}>예정</button>
-          <button className={paymentStatus==='paid' ? 'active' : ''}>완료</button>
-          <button className={paymentStatus==='prepaid' ? 'active' : ''}>사전</button>
-        </div> */}
-
         <div style={{ marginBottom: 12 }}>
-          <label style={{ display: 'block', marginBottom: 4, fontSize: 14 }}>예약 상태</label>
-          <select
-            className="input"
-            value={reservationStatus}
-            onChange={e => setReservationStatus(e.target.value)}
-          >
-            <option value="none">없음</option>
-            <option value="required">필요</option>
-            <option value="completed">완료</option>
-          </select>
+          <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>예약 상태</label>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {['none', 'required', 'completed'].map(status => (
+              <button
+                key={status}
+                onClick={() => setReservationStatus(status)}
+                style={{
+                  flex: 1,
+                  padding: '10px 12px',
+                  background: reservationStatus === status ? '#000' : '#f0f0f0',
+                  color: reservationStatus === status ? '#fff' : '#000',
+                  border: '2px solid ' + (reservationStatus === status ? '#000' : '#ddd'),
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: reservationStatus === status ? 'bold' : 'normal'
+                }}
+              >
+                {status === 'none' && '없음'}
+                {status === 'required' && '필요'}
+                {status === 'completed' && '완료'}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
