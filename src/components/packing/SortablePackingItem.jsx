@@ -39,9 +39,10 @@ export default function SortablePackingItem({ item, onToggle, onDelete, onEdit }
           checked={item.is_done}
           onChange={() => onToggle(item.id, item.is_done)}
           onClick={(e) => e.stopPropagation()}
+          id={item.id}
         />
         <div style={{ flex: 1 }}>
-          <h4 className="card-title">{item.name}</h4>
+          <label className="card-title" for={item.id}>{item.name}</label>
           {item.memo && (
             <p className="text-small text-muted" style={{ margin: '4px 0 0 0' }}>
               {item.memo}
