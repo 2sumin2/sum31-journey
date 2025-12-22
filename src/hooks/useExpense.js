@@ -65,17 +65,21 @@ export function useExpense(expenses, fetchExpenses) {
   const getFilteredExpenses = (tripDays) => {
     if (expenseViewMode === 'day') {
       if (selectedExpenseCategory === '전체') {
-        return expenses
+        return expenses.sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
       }
-      return expenses.filter(e => {
-        const day = tripDays.find(d => d.id === e.trip_day_id)
-        return day && day.date === selectedExpenseCategory
-      })
+      return expenses
+        .filter(e => {
+          const day = tripDays.find(d => d.id === e.trip_day_id)
+          return day && day.date === selectedExpenseCategory
+        })
+        .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
     } else {
       if (selectedExpenseCategory === '전체') {
-        return expenses
+        return expenses.sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
       }
-      return expenses.filter(e => e.category_id === selectedExpenseCategory)
+      return expenses
+        .filter(e => e.category_id === selectedExpenseCategory)
+        .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
     }
   }
 

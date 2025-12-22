@@ -71,16 +71,21 @@ export default function Settings() {
     const oldIndex = categories.findIndex(c => c.id === active.id)
     const newIndex = categories.findIndex(c => c.id === over.id)
 
+    if (oldIndex === -1 || newIndex === -1) return
+
     const newCategories = arrayMove(categories, oldIndex, newIndex)
     setCategories(newCategories)
 
-    // DB 업데이트
-    newCategories.forEach(async (cat, index) => {
-      await supabase
+    // 모든 업데이트를 병렬로 실행하고 완료 대기
+    const updatePromises = newCategories.map((cat, index) =>
+      supabase
         .from('categories')
         .update({ display_order: index })
         .eq('id', cat.id)
-    })
+    )
+    
+    // 모든 업데이트가 완료된 후에만 완료
+    await Promise.all(updatePromises)
   }
 
   const handleSaveCategory = async () => {

@@ -190,7 +190,7 @@ export default function ExpenseSection({
                           navigator.vibrate(20)
                         }
                       }}
-                      onDragEnd={(event) => {
+                      onDragEnd={async (event) => {
                         const { active, over } = event
                         if (!over || active.id === over.id) return
 
@@ -199,16 +199,20 @@ export default function ExpenseSection({
                         const oldIndex = allExpenses.findIndex(e => e.id === active.id)
                         const newIndex = allExpenses.findIndex(e => e.id === over.id)
 
+                        if (oldIndex === -1 || newIndex === -1) return
+
                         const newExpenses = arrayMove(allExpenses, oldIndex, newIndex)
                         
-                        // 각 항목의 display_order 업데이트
-                        newExpenses.forEach(async (exp, index) => {
-                          await supabase
+                        // 모든 업데이트를 병렬로 실행하고 완료 대기
+                        const updatePromises = newExpenses.map((exp, index) =>
+                          supabase
                             .from('expenses')
                             .update({ display_order: index })
                             .eq('id', exp.id)
-                        })
+                        )
                         
+                        // 모든 업데이트가 완료된 후에만 데이터 새로고침
+                        await Promise.all(updatePromises)
                         fetchExpenses()
                       }}
                     >
@@ -264,7 +268,7 @@ export default function ExpenseSection({
                           navigator.vibrate(20)
                         }
                       }}
-                      onDragEnd={(event) => {
+                      onDragEnd={async (event) => {
                         const { active, over } = event
                         if (!over || active.id === over.id) return
 
@@ -273,16 +277,20 @@ export default function ExpenseSection({
                         const oldIndex = allCategoryExpenses.findIndex(e => e.id === active.id)
                         const newIndex = allCategoryExpenses.findIndex(e => e.id === over.id)
 
+                        if (oldIndex === -1 || newIndex === -1) return
+
                         const newExpenses = arrayMove(allCategoryExpenses, oldIndex, newIndex)
                         
-                        // 각 항목의 display_order 업데이트
-                        newExpenses.forEach(async (exp, index) => {
-                          await supabase
+                        // 모든 업데이트를 병렬로 실행하고 완료 대기
+                        const updatePromises = newExpenses.map((exp, index) =>
+                          supabase
                             .from('expenses')
                             .update({ display_order: index })
                             .eq('id', exp.id)
-                        })
+                        )
                         
+                        // 모든 업데이트가 완료된 후에만 데이터 새로고침
+                        await Promise.all(updatePromises)
                         fetchExpenses()
                       }}
                     >

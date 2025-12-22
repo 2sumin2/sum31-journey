@@ -77,16 +77,20 @@ export default function PackingList({ tripId, packingCategories = [], fetchPacki
     const oldIndex = filteredItems.findIndex(i => i.id === active.id)
     const newIndex = filteredItems.findIndex(i => i.id === over.id)
 
+    if (oldIndex === -1 || newIndex === -1) return
+
     const newItems = arrayMove(filteredItems, oldIndex, newIndex)
     
-    // DB 업데이트
-    newItems.forEach(async (item, index) => {
-      await supabase
+    // 모든 업데이트를 병렬로 실행하고 완료 대기
+    const updatePromises = newItems.map((item, index) =>
+      supabase
         .from('packing_items')
         .update({ display_order: index })
         .eq('id', item.id)
-    })
-
+    )
+    
+    // 모든 업데이트가 완료된 후에만 데이터 새로고침
+    await Promise.all(updatePromises)
     fetchItems()
   }
 
