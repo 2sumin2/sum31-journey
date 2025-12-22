@@ -17,7 +17,7 @@ export default function SortableWordItem({ word, categories = [], onDelete, onUp
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.6 : 1,
-    zIndex: isDragging ? 1000 : 'auto',
+    zIndex: isDragging ? 850 : 'auto',
   }
 
   // 카테고리 찾기
@@ -95,6 +95,9 @@ export default function SortableWordItem({ word, categories = [], onDelete, onUp
           )}
         </div>
       </div>
+      {showMenu && (
+        <div className="dropdown-overlay" onClick={() => setShowMenu(false)} />
+      )}
     </div>
   )
 }

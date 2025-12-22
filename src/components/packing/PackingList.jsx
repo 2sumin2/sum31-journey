@@ -5,24 +5,30 @@ import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-ki
 import SortablePackingItem from './SortablePackingItem'
 import Modal from '../../ui/Modal'
 
-export default function PackingList({ tripId }) {
+export default function PackingList({ tripId, packingCategories = [], fetchPackingCategories }) {
   const [items, setItems] = useState([])
   const [name, setName] = useState('')
   const [memo, setMemo] = useState('')
+  const [categoryId, setCategoryId] = useState('')
   const [itemModalOpen, setItemModalOpen] = useState(false)
   const [editingItemId, setEditingItemId] = useState(null)
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false)
+  const [categoryName, setCategoryName] = useState('')
+  const [editingCategory, setEditingCategory] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState('전체')
+  const [showIncompleteOnly, setShowIncompleteOnly] = useState(false)
 
   const sensors = useSensors(
     // PC
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // 살짝 움직여야 드래그
+        distance: 8,
       },
     }),
     // 모바일
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 250, // 꾹 누르기
+        delay: 250,
         tolerance: 5,
       },
     })
@@ -45,17 +51,34 @@ export default function PackingList({ tripId }) {
     setItems(data ?? [])
   }
 
+  // 필터링된 아이템
+  const getFilteredItems = () => {
+    let filtered = items
+
+    // 카테고리 필터
+    if (selectedCategory !== '전체') {
+      filtered = filtered.filter(item => item.category_id === selectedCategory)
+    }
+
+    // 미완료 필터
+    if (showIncompleteOnly) {
+      filtered = filtered.filter(item => !item.is_done)
+    }
+
+    return filtered
+  }
+
   // 드래그 앤 드롭 핸들러
   const handleDragEnd = async (event) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
 
-    const oldIndex = items.findIndex(i => i.id === active.id)
-    const newIndex = items.findIndex(i => i.id === over.id)
+    const filteredItems = getFilteredItems()
+    const oldIndex = filteredItems.findIndex(i => i.id === active.id)
+    const newIndex = filteredItems.findIndex(i => i.id === over.id)
 
-    const newItems = arrayMove(items, oldIndex, newIndex)
-    setItems(newItems)
-
+    const newItems = arrayMove(filteredItems, oldIndex, newIndex)
+    
     // DB 업데이트
     newItems.forEach(async (item, index) => {
       await supabase
@@ -63,6 +86,8 @@ export default function PackingList({ tripId }) {
         .update({ display_order: index })
         .eq('id', item.id)
     })
+
+    fetchItems()
   }
 
   useEffect(() => {
@@ -71,6 +96,7 @@ export default function PackingList({ tripId }) {
     }
   }, [tripId])
 
+  // 준비물 추가/수정
   const addItem = async () => {
     if (!name.trim()) return
 
@@ -80,7 +106,8 @@ export default function PackingList({ tripId }) {
         .from('packing_items')
         .update({
           name: name.trim(),
-          memo: memo.trim() || null
+          memo: memo.trim() || null,
+          category_id: categoryId || null
         })
         .eq('id', editingItemId)
 
@@ -97,6 +124,7 @@ export default function PackingList({ tripId }) {
           trip_id: tripId,
           name: name.trim(),
           memo: memo.trim() || null,
+          category_id: categoryId || null,
           is_done: false
         })
 
@@ -109,6 +137,7 @@ export default function PackingList({ tripId }) {
 
     setName('')
     setMemo('')
+    setCategoryId('')
     setEditingItemId(null)
     setItemModalOpen(false)
     fetchItems()
@@ -119,6 +148,7 @@ export default function PackingList({ tripId }) {
     setEditingItemId(item.id)
     setName(item.name)
     setMemo(item.memo || '')
+    setCategoryId(item.category_id || '')
     setItemModalOpen(true)
   }
 
@@ -152,6 +182,66 @@ export default function PackingList({ tripId }) {
     fetchItems()
   }
 
+  // 카테고리 추가/수정
+  const saveCategory = async () => {
+    if (!categoryName.trim()) return alert('카테고리 이름을 입력해주세요.')
+
+    if (editingCategory && editingCategory.id) {
+      // 수정
+      const { error } = await supabase
+        .from('packing_categories')
+        .update({ name: categoryName.trim() })
+        .eq('id', editingCategory.id)
+      
+      if (error) {
+        console.error('update category error', error)
+        return alert('카테고리 수정 실패')
+      }
+    } else {
+      // 추가
+      const { error } = await supabase
+        .from('packing_categories')
+        .insert({
+          trip_id: tripId,
+          name: categoryName.trim()
+        })
+      
+      if (error) {
+        console.error('add category error', error)
+        return alert('카테고리 추가 실패')
+      }
+    }
+
+    setCategoryName('')
+    setEditingCategory(null)
+    fetchPackingCategories()
+  }
+
+  // 카테고리 삭제
+  const deleteCategory = async (categoryId) => {
+    if (!confirm('카테고리를 삭제하시겠습니까?')) return
+
+    const { error } = await supabase
+      .from('packing_categories')
+      .delete()
+      .eq('id', categoryId)
+    
+    if (error) {
+      console.error('delete category error', error)
+      return alert('카테고리 삭제 실패')
+    }
+
+    fetchPackingCategories()
+  }
+
+  // 카테고리 수정 시작
+  const startEditCategory = (category) => {
+    setEditingCategory(category)
+    setCategoryName(category.name)
+  }
+
+  const filteredItems = getFilteredItems()
+
   return (
     <div>
       <div className="header">
@@ -162,10 +252,17 @@ export default function PackingList({ tripId }) {
             setEditingItemId(null)
             setName('')
             setMemo('')
+            setCategoryId('')
             setItemModalOpen(true)
           }}
         >
           + 준비물
+        </button>
+        <button
+          className="add-button second"
+          onClick={() => setCategoryModalOpen(true)}
+        >
+          카테고리
         </button>
       </div>
 
@@ -177,6 +274,7 @@ export default function PackingList({ tripId }) {
             setItemModalOpen(false)
             setName('')
             setMemo('')
+            setCategoryId('')
             setEditingItemId(null)
           }}
           title={editingItemId ? '준비물 수정' : '준비물 추가'}
@@ -196,6 +294,14 @@ export default function PackingList({ tripId }) {
               onChange={e => setMemo(e.target.value)}
               onKeyPress={e => e.key === 'Enter' && addItem()}
             />
+            <select 
+              className="input" 
+              value={categoryId} 
+              onChange={e => setCategoryId(e.target.value)}
+            >
+              <option value="">카테고리 선택 (선택사항)</option>
+              {packingCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
             <div className='flex-box'>
               <button className="main" onClick={addItem} style={{ flex: 1 }}>
                 {editingItemId ? '수정' : '저장'}
@@ -205,6 +311,7 @@ export default function PackingList({ tripId }) {
                   setItemModalOpen(false)
                   setName('')
                   setMemo('')
+                  setCategoryId('')
                   setEditingItemId(null)
                 }}
                 style={{ flex: 1 }}
@@ -216,32 +323,147 @@ export default function PackingList({ tripId }) {
         </Modal>
       )}
 
+      {/* 카테고리 관리 모달 */}
+      {categoryModalOpen && (
+        <Modal
+          open={true}
+          onClose={() => {
+            setCategoryModalOpen(false)
+            setCategoryName('')
+            setEditingCategory(null)
+          }}
+          title={editingCategory ? '카테고리 수정' : '카테고리 관리'}
+        >
+          <div>
+            {!editingCategory ? (
+              <>
+                {/* 카테고리 목록 */}
+                <div style={{ marginBottom: 16 }}>
+                  {packingCategories.length === 0 ? (
+                    <p className="category-empty-msg">
+                      등록된 카테고리가 없습니다.
+                    </p>
+                  ) : (
+                    <div className="category-list">
+                      {packingCategories.map(cat => (
+                        <div key={cat.id} className="category-item">
+                          <span>{cat.name}</span>
+                          <button
+                            className="category-edit-btn"
+                            onClick={() => startEditCategory(cat)}
+                          >
+                            ✎
+                          </button>
+                          <button
+                            className="category-delete-btn"
+                            onClick={() => deleteCategory(cat.id)}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={() => {
+                    setEditingCategory({})
+                    setCategoryName('')
+                  }}
+                  style={{ width: '100%' }}
+                >
+                  + 새 카테고리
+                </button>
+              </>
+            ) : (
+              <>
+                <input
+                  className="input"
+                  placeholder="카테고리 이름"
+                  value={categoryName}
+                  onChange={e => setCategoryName(e.target.value)}
+                  onKeyPress={e => e.key === 'Enter' && saveCategory()}
+                />
+                <div className='flex-box'>
+                  <button className="main" onClick={saveCategory} style={{ flex: 1 }}>
+                    저장
+                  </button>
+                  <button className="sub" style={{ flex: 1 }}
+                    onClick={() => {
+                      setEditingCategory(null)
+                      setCategoryName('')
+                    }}
+                  >
+                    취소
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </Modal>
+      )}
+
+      {/* 필터 옵션 */}
+      <div className="filter-group">
+        <div className="flex-row">
+          <button
+            className={`filter-button ${selectedCategory === '전체' ? 'active' : ''}`}
+            onClick={() => setSelectedCategory('전체')}
+          >
+            전체
+          </button>
+          {packingCategories.map(cat => (
+            <button
+              key={cat.id}
+              className={`filter-button ${selectedCategory === cat.id ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat.id)}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+        <div className="flex-row">
+          <label className="toggle-label">
+            <input
+              type="checkbox"
+              checked={showIncompleteOnly}
+              onChange={(e) => setShowIncompleteOnly(e.target.checked)}
+            />
+            <span>미완료만 보기</span>
+          </label>
+        </div>
+      </div>
+
+      {/* 준비물 리스트 */}
       <DndContext 
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragStart={() => {
-            // 모바일 진동
             if (navigator.vibrate) {
               navigator.vibrate(20)
             }
           }}
           onDragEnd={handleDragEnd}>
-        <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-          {items.map(item => (
-            <SortablePackingItem
-              key={item.id}
-              item={item}
-              onToggle={toggleDone}
-              onDelete={deleteItem}
-              onEdit={startEditItem}
-            />
-          ))}
+        <SortableContext items={filteredItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
+          {filteredItems.map(item => {
+            const category = packingCategories.find(c => c.id === item.category_id)
+            return (
+              <SortablePackingItem
+                key={item.id}
+                item={item}
+                category={category}
+                onToggle={toggleDone}
+                onDelete={deleteItem}
+                onEdit={startEditItem}
+              />
+            )
+          })}
         </SortableContext>
       </DndContext>
 
-      {items.length === 0 && (
+      {filteredItems.length === 0 && (
         <p className="empty-state">
-          준비물을 추가해주세요.
+          {showIncompleteOnly ? '완료된 준비물만 남았어요!' : '준비물을 추가해주세요.'}
         </p>
       )}
     </div>

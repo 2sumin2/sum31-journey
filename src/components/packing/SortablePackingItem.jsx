@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
 
-export default function SortablePackingItem({ item, onToggle, onDelete, onEdit }) {
+export default function SortablePackingItem({ item, category, onToggle, onDelete, onEdit }) {
   const [showMenu, setShowMenu] = useState(false)
   const {
     attributes,
@@ -17,7 +17,7 @@ export default function SortablePackingItem({ item, onToggle, onDelete, onEdit }
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.6 : 1,
-    zIndex: isDragging ? 1000 : 'auto',
+    zIndex: isDragging ? 850 : 'auto',
   }
 
   return (
@@ -42,7 +42,16 @@ export default function SortablePackingItem({ item, onToggle, onDelete, onEdit }
           id={item.id}
         />
         <div style={{ flex: 1 }}>
-          <label className="card-title" for={item.id}>{item.name}</label>
+          <div className="card-header">
+            <label className="card-title" htmlFor={item.id} style={{ width: '100%' }}>{item.name}</label>
+          </div>
+          <div className="badge-box">
+            {category && (
+              <span className="badge category-badge" style={{ marginRight: 8 }}>
+                {category.name}
+              </span>
+            )}
+          </div>
           {item.memo && (
             <p className="text-small text-muted" style={{ margin: '4px 0 0 0' }}>
               {item.memo}
@@ -86,6 +95,9 @@ export default function SortablePackingItem({ item, onToggle, onDelete, onEdit }
           )}
         </div>
       </div>
+      {showMenu && (
+        <div className="dropdown-overlay" onClick={() => setShowMenu(false)} />
+      )}
     </div>
   )
 }

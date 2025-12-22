@@ -9,6 +9,7 @@ export function useTripData(tripId, userId) {
   const [categories, setCategories] = useState([])
   const [exchangeRates, setExchangeRates] = useState({})
   const [words, setWords] = useState([])
+  const [packingCategories, setPackingCategories] = useState([])
 
   // 날짜 포맷팅 함수
   const formatDate = (dateString) => {
@@ -245,12 +246,31 @@ export function useTripData(tripId, userId) {
     setWords(data ?? [])
   }
 
+  // 준비물 카테고리 가져오기
+  const fetchPackingCategories = async () => {
+    const { data, error } = await supabase
+      .from('packing_categories')
+      .select('*')
+      .eq('trip_id', tripId)
+      .order('display_order', { ascending: true, nullsFirst: true })
+      .order('created_at', { ascending: false })
+  
+    if (error) {
+      console.error('fetch packing categories error', error)
+      setPackingCategories([])
+      return
+    }
+
+    setPackingCategories(data ?? [])
+  }
+
   useEffect(() => {
     if (tripId) {
       fetchTrip()
       fetchSchedules()
       fetchExpenses()
       fetchWords()
+      fetchPackingCategories()
     }
   }, [tripId])
 
@@ -269,11 +289,13 @@ export function useTripData(tripId, userId) {
     categories,
     exchangeRates,
     words,
+    packingCategories,
     formatDate,
     fetchTrip,
     fetchSchedules,
     fetchExpenses,
     fetchCategories,
-    fetchWords
+    fetchWords,
+    fetchPackingCategories
   }
 }

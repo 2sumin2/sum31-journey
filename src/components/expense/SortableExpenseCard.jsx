@@ -16,7 +16,7 @@ export default function SortableExpenseCard({ expense, category, onEdit, onDelet
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.6 : 1,
-    zIndex: isDragging ? 1000 : 'auto',
+    zIndex: isDragging ? 850 : 'auto',
   }
 
   return (

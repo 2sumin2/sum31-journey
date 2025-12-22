@@ -146,7 +146,7 @@ body {
   border-radius: 8px;
   padding: 4px 0;
   min-width: 100px;
-  z-index: 10;
+  z-index: 700;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
@@ -172,7 +172,7 @@ body {
 .dropdown-overlay {
   position: fixed;
   inset: 0;
-  z-index: 5;
+  z-index: 699;
 }
 
 .drag-handle {
@@ -195,7 +195,7 @@ body {
 .sidebar-toggle {
   position: fixed;
   top: 15px;
-  z-index: 101;
+  z-index: 900;
   background: #000;
   color: #fff;
   border: 2px solid #000;
@@ -218,7 +218,7 @@ body {
   background: #fff;
   border-right: 2px solid #000;
   padding: 24px 16px;
-  z-index: 100;
+  z-index: 900;
   transition: left 0.3s ease;
 }
 
@@ -267,7 +267,7 @@ body {
 .sidebar-overlay {
   position: fixed;
   inset: 0;
-  z-index: 99;
+  z-index: 899;
   background: transparent;
 }
 
@@ -279,7 +279,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 800;
   padding: 16px;
 }
 
@@ -388,7 +388,7 @@ button.sub {
   font-weight: 600;
   padding: 5px 20px;
   text-align: left;
-  z-index: 999;
+  z-index: 900;
 }
 
 .add-button.second {

@@ -194,11 +194,14 @@ export default function ExpenseSection({
                         const { active, over } = event
                         if (!over || active.id === over.id) return
 
-                        const oldIndex = dayExpenses.findIndex(e => e.id === active.id)
-                        const newIndex = dayExpenses.findIndex(e => e.id === over.id)
+                        // 현재 expenses 배열에서 올바른 인덱스 찾기
+                        const allExpenses = expenses.filter(e => e.trip_day_id === day.id)
+                        const oldIndex = allExpenses.findIndex(e => e.id === active.id)
+                        const newIndex = allExpenses.findIndex(e => e.id === over.id)
 
-                        const newExpenses = arrayMove(dayExpenses, oldIndex, newIndex)
+                        const newExpenses = arrayMove(allExpenses, oldIndex, newIndex)
                         
+                        // 각 항목의 display_order 업데이트
                         newExpenses.forEach(async (exp, index) => {
                           await supabase
                             .from('expenses')
@@ -253,16 +256,26 @@ export default function ExpenseSection({
                   </h3>
                   {!showExpenseCategory && (
                     <DndContext
+                      sensors={sensors}
                       collisionDetection={closestCenter}
+                      onDragStart={() => {
+                        // 모바일 진동
+                        if (navigator.vibrate) {
+                          navigator.vibrate(20)
+                        }
+                      }}
                       onDragEnd={(event) => {
                         const { active, over } = event
                         if (!over || active.id === over.id) return
 
-                        const oldIndex = categoryExpenses.findIndex(e => e.id === active.id)
-                        const newIndex = categoryExpenses.findIndex(e => e.id === over.id)
+                        // 현재 카테고리의 expenses 배열에서 올바른 인덱스 찾기
+                        const allCategoryExpenses = expenses.filter(e => e.category_id === cat.id)
+                        const oldIndex = allCategoryExpenses.findIndex(e => e.id === active.id)
+                        const newIndex = allCategoryExpenses.findIndex(e => e.id === over.id)
 
-                        const newExpenses = arrayMove(categoryExpenses, oldIndex, newIndex)
+                        const newExpenses = arrayMove(allCategoryExpenses, oldIndex, newIndex)
                         
+                        // 각 항목의 display_order 업데이트
                         newExpenses.forEach(async (exp, index) => {
                           await supabase
                             .from('expenses')

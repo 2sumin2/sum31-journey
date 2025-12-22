@@ -28,11 +28,13 @@ export default function Trip() {
     categories,
     exchangeRates,
     words,
+    packingCategories,
     formatDate,
     fetchTrip,
     fetchSchedules,
     fetchExpenses,
-    fetchCategories
+    fetchCategories,
+    fetchPackingCategories
   } = useTripData(id, userId)
 
   // 일정 관리 훅
@@ -161,7 +163,7 @@ export default function Trip() {
           />
         )}
         
-        {currentTab === 'packing' && <PackingList tripId={id} />}
+        {currentTab === 'packing' && <PackingList tripId={id} packingCategories={packingCategories} fetchPackingCategories={fetchPackingCategories} />}
         
         {currentTab === 'words' && (
           <div>
