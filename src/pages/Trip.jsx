@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUser } from '../contexts/UserContext'
 import { useTripData } from '../hooks/useTripData'
 import { useSchedule } from '../hooks/useSchedule'
@@ -89,6 +89,18 @@ export default function Trip() {
   const [editingWords, setEditingWords] = useState(null)
   const [wordCategoriesOpen, setWordCategoriesOpen] = useState(false)
   const [editingWordCategories, setEditingWordCategories] = useState(null)
+
+  // 페이지 이동 시 모든 모달 닫기
+  useEffect(() => {
+    setOpen(false)
+    setExpenseOpen(false)
+    setWordsOpen(false)
+    setWordCategoriesOpen(false)
+    setEditingSchedule(null)
+    setEditingExpense(null)
+    setEditingWords(null)
+    setEditingWordCategories(null)
+  }, [location.pathname])
 
   // 현재 탭 결정 (라우팅 기반)
   const getCurrentTab = () => {

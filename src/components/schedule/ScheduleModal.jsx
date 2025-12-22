@@ -34,6 +34,18 @@ export default function ScheduleModal({ tripId, schedule = null, categories = []
       setMemo(schedule.memo || '')
       setMemo2(schedule.memo2 || '')
       setCategory(schedule.category || '')
+      // 장소 데이터 설정
+      if (schedule.place_id || schedule.place_name) {
+        setSelectedPlace({
+          id: schedule.place_id,
+          name: schedule.place_name,
+          address: schedule.place_address
+        })
+      } else {
+        setSelectedPlace(null)
+      }
+    } else {
+      setSelectedPlace(null)
     }
   }, [schedule])
 

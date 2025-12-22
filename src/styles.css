@@ -729,18 +729,20 @@ button.sub {
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
 .time-picker-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
+  right: 0;
   background: #fff;
   border: 2px solid #000;
   border-radius: 8px;
-  padding: 5px;
+  padding: 16px;
   margin-top: 4px;
-  z-index: 700;
+  z-index: 1000;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
