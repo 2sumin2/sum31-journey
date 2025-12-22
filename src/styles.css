@@ -713,3 +713,73 @@ button.sub {
   margin: 0;
   margin-bottom: 12px;
 }
+
+
+/* Time Picker Styles */
+.time-picker-container {
+  position: relative;
+}
+
+.time-picker-input-button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.time-picker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 5px;
+  margin-top: 4px;
+  z-index: 700;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.time-picker-select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: max-content;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.time-picker-pick-button {
+  width: 32px;
+  height: 32px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 4px;
+  display: block;
+  margin: 0 auto 4px;
+  padding: 0 5px;
+}
+
+.time-picker-button {
+  padding: 6px 12px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  flex: 1;
+  min-width: max-content;
+}
+
+.time-picker-button.save {
+  background: #6fb36e;
+  color: #fff;
+  border: 1px solid #6fb36e;
+}

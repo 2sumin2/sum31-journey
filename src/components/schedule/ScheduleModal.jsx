@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../supabase'
 import Modal from '../../ui/Modal'
 import PlaceSearch from './PlaceSearch'
+import TimePicker from './TimePicker'
 
 export default function ScheduleModal({ tripId, schedule = null, categories = [], onClose }) {
   const [title, setTitle] = useState('')
@@ -125,31 +126,27 @@ export default function ScheduleModal({ tripId, schedule = null, categories = []
             </label>
             {useTimeRange ? (
               <div className='flex-box'>
-                <input
-                  className="input"
-                  type="time"
-                  placeholder="시작 시간"
-                  value={time}
-                  onChange={e => setTime(e.target.value)}
-                  style={{ flex: 1 }}
-                />
-                <span style={{ alignSelf: 'center' }}>~</span>
-                <input
-                  className="input"
-                  type="time"
-                  placeholder="종료 시간"
-                  value={timeEnd}
-                  onChange={e => setTimeEnd(e.target.value)}
-                  style={{ flex: 1 }}
-                />
+                <div style={{ flex: 1 }}>
+                  <TimePicker
+                    value={time}
+                    onChange={setTime}
+                    placeholder="시작 시간"
+                  />
+                </div>
+                <span style={{ alignSelf: 'center', margin: '0 8px' }}>~</span>
+                <div style={{ flex: 1 }}>
+                  <TimePicker
+                    value={timeEnd}
+                    onChange={setTimeEnd}
+                    placeholder="종료 시간"
+                  />
+                </div>
               </div>
             ) : (
-              <input
-                className="input"
-                type="time"
-                placeholder="시간 (선택)"
+              <TimePicker
                 value={time}
-                onChange={e => setTime(e.target.value)}
+                onChange={setTime}
+                placeholder="시간 (선택)"
               />
             )}
           </div>
