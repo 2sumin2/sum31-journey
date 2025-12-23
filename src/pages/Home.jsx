@@ -12,20 +12,20 @@ export default function Home() {
   const [end, setEnd] = useState('')
   const nav = useNavigate()
 
+  const fetchTrips = async () => {
+    if (!userId) return;
+
+    const { data } = await supabase
+      .from('trips')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+    setTrips(data)
+  };
+
   useEffect(() => {
     if (!userId) return;
-  
-    const fetchTrips = async () => {
-      if (!userId) return;
-  
-      const { data } = await supabase
-        .from('trips')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-      setTrips(data)
-    }
-  
+
     fetchTrips();
   }, [userId]);
 
