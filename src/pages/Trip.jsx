@@ -252,13 +252,13 @@ export default function Trip() {
               {selectedSchedule.memo && (
                 <div>
                   <strong>메모:</strong>
-                  <p style={{ whiteSpace: 'pre-wrap', marginTop: 8 }}>{selectedSchedule.memo}</p>
+                  <p className="card-memo" style={{ marginTop: 8 }}>{selectedSchedule.memo}</p>
                 </div>
               )}
               {selectedSchedule.memo2 && (
                 <div>
                   <strong>메모2:</strong>
-                  <p style={{ whiteSpace: 'pre-wrap', marginTop: 8 }}>{selectedSchedule.memo2}</p>
+                  <p className="card-memo" style={{ marginTop: 8 }}>{selectedSchedule.memo2}</p>
                 </div>
               )}
               {selectedSchedule.place_address && (
