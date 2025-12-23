@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Trip from './pages/Trip'
+import Gallery from './pages/Gallery'
 import Settings from './pages/Settings'
 import SignIn from './pages/SignIn'
 import RequireAuth from './components/RequireAuth'
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/trip/:id" element={<RequireAuth><Trip /></RequireAuth>} />
           <Route path="/trip/:id/expense" element={<RequireAuth><Trip /></RequireAuth>} />
           <Route path="/trip/:id/packing" element={<RequireAuth><Trip /></RequireAuth>} />
+          <Route path="/trip/:id/gallery" element={<RequireAuth><Gallery /></RequireAuth>} />
           <Route path="/trip/:id/words" element={<RequireAuth><Trip /></RequireAuth>} />
           <Route path="/trip/:id/settings" element={<RequireAuth><Settings /></RequireAuth>} />
         </Routes>

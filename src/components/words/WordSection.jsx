@@ -3,6 +3,7 @@ import { supabase } from '../../supabase'
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import SortableWordItem from './SortableWordItem'
+import WordModal from './WordModal'
 import Modal from '../../ui/Modal'
 
 export default function WordSection({ tripId, categories, wordsOpen, editingWords, wordCategoriesOpen, editingWordCategories, onClose, onEditWord, onCategoryModalClose, words: propWords }) {
@@ -18,6 +19,7 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
   const [categoryName, setCategoryName] = useState('')
   const [editingCategory, setEditingCategory] = useState(null)
   const [editingWordId, setEditingWordId] = useState(null)
+  const [selectedWord, setSelectedWord] = useState(null)
 
   const sensors = useSensors(
     // PC
@@ -249,6 +251,11 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
 
   return (
     <>
+      {/* 단어 상세 모달 */}
+      {selectedWord && (
+        <WordModal word={selectedWord} onClose={() => setSelectedWord(null)} />
+      )}
+
       {/* 단어 추가/수정 모달 */}
       {wordsOpen && (
         <Modal
@@ -444,6 +451,7 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
                 startEditWord(word)
                 onEditWord && onEditWord()
               }}
+              onView={(word) => setSelectedWord(word)}
               wordsOpen={wordsOpen}
               editingWords={editingWords}
             />

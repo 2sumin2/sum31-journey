@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
 
-export default function SortableWordItem({ word, categories = [], onDelete, onUpdate, onEdit, wordsOpen, editingWords }) {
+export default function SortableWordItem({ word, categories = [], onDelete, onUpdate, onEdit, onView, wordsOpen, editingWords }) {
   const [showMenu, setShowMenu] = useState(false)
   const {
     attributes,
@@ -23,16 +23,24 @@ export default function SortableWordItem({ word, categories = [], onDelete, onUp
   // 카테고리 찾기
   const category = categories.find(c => c.id === word.category_id)
 
+  const handleCardClick = (e) => {
+    // 드래그 핸들러나 메뉴 버튼이 아닌 경우에만 상세보기
+    if (!e.defaultPrevented && e.target.closest('.dropdown-container') === null) {
+      onView && onView(word)
+    }
+  }
+
   return (
     <div
       ref={setNodeRef}
       {...attributes}
-      className="card"
+      className="card card-clickable"
       style={{
         ...style,
         cursor: 'grab',
       }}
       {...listeners}
+      onClick={handleCardClick}
     >
       <div className="card-content">
         <div className="card-body">
