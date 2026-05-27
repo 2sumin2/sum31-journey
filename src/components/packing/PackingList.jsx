@@ -79,8 +79,17 @@ export default function PackingList({ tripId, packingCategories = [], fetchPacki
 
     if (oldIndex === -1 || newIndex === -1) return
 
-    const newItems = arrayMove(filteredItems, oldIndex, newIndex)
-    
+    const newFilteredOrder = arrayMove(filteredItems, oldIndex, newIndex)
+
+    // 필터된 항목들의 새 순서를 전체 배열에 병합 (숨겨진 항목 순서 유지)
+    const filteredIds = new Set(filteredItems.map(i => i.id))
+    let filteredIdx = 0
+    const newItems = items.map(item =>
+      filteredIds.has(item.id) ? newFilteredOrder[filteredIdx++] : item
+    )
+
+    setItems(newItems)
+
     // 모든 업데이트를 병렬로 실행하고 완료 대기
     const updatePromises = newItems.map((item, index) =>
       supabase
@@ -88,7 +97,7 @@ export default function PackingList({ tripId, packingCategories = [], fetchPacki
         .update({ display_order: index })
         .eq('id', item.id)
     )
-    
+
     // 모든 업데이트가 완료된 후에만 데이터 새로고침
     await Promise.all(updatePromises)
     fetchItems()

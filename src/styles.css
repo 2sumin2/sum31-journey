@@ -1,17 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Coming+Soon&family=Poor+Story&display=swap');
+
+:root {
+  --font-page: 26px;
+  --font-page2: 24px;
+  --font-normal: 16px;
+  --font-title: 18px;
+  --font-memo: 15px;
+  --font-small: 14px;
+  --font-tag: 13px;
+  --font-mini: 12px;
+
+  --color-black: #111111;
+  --color-gray: #333;
+  --color-mute: #999;
+  --color-signature: #FF7FA3;
+  --color-del: #FF6B6B;
+
+  --color-card: #d7f9ff;
+  --color-cash: #ffd7d7;
+
+  --color-prepaid: #B794F4;
+  --color-paid: #48BB78;
+  --color-scheduled: #63B3ED;
+}
+
 body {
   margin: 0;
-  background: #f2f2f2;
-  font-family: Pretendard, sans-serif;
+  background: white;
+  font-family: 'Coming Soon', 'Poor Story', sans-serif;
+  font-size: var(--font-normal);
+  font-weight: bold;
+  color: var(--color-black);
+}
+
+h1 {
+  font-size: var(--font-page);
+}
+
+h2 {
+  font-size: var(--font-page2);
+}
+
+h4 {
+  font-size: var(--font-title);
+}
+
+p {
+  font-size: var(--font-memo);
 }
 
 /* Card Styles */
 .card {
-  background: #fff;
-  border: 2px solid #000;
+  background: white;
+  border: 0;
   border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 12px;
-}
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 10px 16px;
+  margin-bottom: 8px;
+} 
 
 .card-clickable {
   cursor: pointer;
@@ -22,6 +68,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  align-items: center;
 }
 
 .card-body {
@@ -41,9 +88,9 @@ body {
 
 .card-memo {
   margin: 8px 0 0 0;
-  font-size: 14px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+  font-weight: normal;
 }
 
 /* Badge & Tag Styles */
@@ -56,71 +103,67 @@ body {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 12px;
-  font-size: 11px;
-}
-
-.badge-small {
-  font-size: 11px;
-}
-
-.badge-medium {
-  font-size: 12px;
+  font-size: var(--font-tag);
 }
 
 .category-tag {
   background: white;
-  color: black;
+  color: var(--color-black);
   padding: 2px 8px;
   border-radius: 12px;
-  font-size: 11px;
-  border: 1px solid black;
+  font-size: var(--font-tag);
+  border: 0;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
 }
 
 .status-badge {
-  background: #666;
+  background: var(--color-mute);
   color: #fff;
   padding: 2px 8px;
   border-radius: 12px;
-  font-size: 11px;
-  border: 1px solid black;
+  font-size: var(--font-tag);
+  border: 0;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
 }
 
 .status-badge.planned {
-  background: #666;
+  background: var(--color-mute);
 }
 
 .status-badge.paid {
-  background: #4caf50;
+  background: var(--color-paid);
 }
 
 .status-badge.prepaid {
-  background: #ff9800;
+  background: var(--color-prepaid);
 }
 
 .category-badge {
   background: white;
-  color: black;
+  color: var(--color-black);
   padding: 2px 8px;
   border-radius: 12px;
-  font-size: 11px;
-  border: 1px solid black;
+  font-size: var(--font-tag);
+  border: 0;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
 }
 
 .cash-badge {
   background: white;
-  color: black;
+  color: var(--color-black);
   padding: 2px 8px;
   border-radius: 12px;
-  font-size: 11px;
-  border: 1px solid black;
+  font-size: var(--font-tag);
+  border: 0;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
 }
 
 .cash-badge.is-cash {
-  background: #ffd7d7;
+  background: var(--color-cash);
 }
 
 .cash-badge.is-card {
-  background: #d7f9ff;
+  background: var(--color-card);
 }
 
 
@@ -132,10 +175,10 @@ body {
 .dropdown-button {
   background: transparent;
   border: none;
+  box-shadow: none;
   cursor: pointer;
   padding: 4px 8px;
-  font-size: 18px;
-  color: #666;
+  font-size: var(--font-title);
 }
 
 .dropdown-menu {
@@ -143,12 +186,12 @@ body {
   right: 0;
   top: 100%;
   background: #fff;
-  border: 2px solid #000;
+  border: 0;
   border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   padding: 4px 0;
   min-width: 100px;
   z-index: 700;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .dropdown-item {
@@ -158,8 +201,8 @@ body {
   padding: 8px 16px;
   text-align: left;
   cursor: pointer;
-  font-size: 14px;
-  color:#000;
+  font-size: var(--font-normal);
+  color:var(--color-black);
 }
 
 .dropdown-item:hover {
@@ -167,24 +210,13 @@ body {
 }
 
 .dropdown-item.danger {
-  color: #d32f2f;
+  color: var(--color-del);
 }
 
 .dropdown-overlay {
   position: fixed;
   inset: 0;
   z-index: 699;
-}
-
-.drag-handle {
-  cursor: grab;
-  touch-action: none;
-  font-size: 18px;
-  padding: 4px 8px;
-}
-
-.drag-handle:active {
-  cursor: grabbing;
 }
 
 .card {
@@ -197,13 +229,12 @@ body {
   position: fixed;
   top: 15px;
   z-index: 900;
-  background: #000;
-  color: #fff;
-  border: 2px solid #000;
+  color: var(--color-signature);
+  border: 0;
   border-radius: 0 8px 8px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   padding: 8px 12px;
   cursor: pointer;
-  font-size: 18px;
   transition: left 0.3s ease;
   display: flex;
   align-items: center;
@@ -217,7 +248,6 @@ body {
   top: 0;
   bottom: 0;
   background: #fff;
-  border-right: 2px solid #000;
   padding: 24px 16px;
   z-index: 900;
   transition: left 0.3s ease;
@@ -234,12 +264,13 @@ body {
 .logout-tag {
   display: inline-block;
   background: white;
-  color: black;
+  color: var(--color-signature);
   padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
   margin-bottom: 8px;
-  border: 1px solid black;
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  font-size: var(--font-tag);
 }
 
 .sidebar-menu {
@@ -249,20 +280,19 @@ body {
 }
 
 .sidebar-menu-item {
-  border: 2px solid #000;
-  border-radius: 8px;
+  background: transparent;
+  color: var(--color-black);
   padding: 12px 16px;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   text-align: left;
   cursor: pointer;
-  font-weight: 400;
-  background: transparent;
-  color: #000;
+  font-size: var(--font-small);
 }
 
 .sidebar-menu-item.active {
-  background: #000;
-  color: #fff;
-  font-weight: 600;
+  color: var(--color-signature);
 }
 
 .sidebar-overlay {
@@ -340,37 +370,41 @@ body {
 
 /* Button Styles */
 button {
+  font-family: 'Coming Soon', 'Poor Story', sans-serif;
+  font-weight: bold;
   background: #ffffff;
-  color: #000000;
-  border: 2px solid #000000;
+  color: var(--color-black);
+  border: 0;
   border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   padding: 10px 16px;
   cursor: pointer;
+
 }
 
 button.main {
-  background: #6fb36e;
-  color: #fff;
-  border: 2px solid #6fb36e;
+  background: white;
+  color: var(--color-signature);
 }
 
 button.sub {
-  background: #666666;
-  color: #fff;
-  border: 2px solid #666666;
+  color: var(--color-gray);
+  background: #fff;
 }
 
 .button-secondary {
-  background: #666;
+  background: var(--color-mute);
 }
 
 .button-danger {
-  background: #d32f2f;
+  background: var(--color-del);
 }
 
 .button-small {
   padding: 4px 12px;
-  font-size: 12px;
+  color: white;
+  font-size: var(--font-tag);
+  font-weight: normal;
 }
 
 .button-transparent {
@@ -384,12 +418,11 @@ button.sub {
   position: fixed;
   top: 15px;
   right: -20px;
-  background: white;
-  color: black;
-  font-weight: 600;
+  color: var(--color-signature);
   padding: 5px 20px;
   text-align: left;
   z-index: 900;
+  font-size: var(--font-small);
 }
 
 .add-button.second {
@@ -398,10 +431,14 @@ button.sub {
 
 /* Input Styles */
 .input, select {
+  font-family: 'Coming Soon', 'Poor Story', sans-serif;
+  font-weight: bold;
+  font-size: var(--font-small);
   width: 100%;
   padding: 12px;
+  border: 0;
   border-radius: 12px;
-  border: 2px solid #000;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   margin-bottom: 8px;
   box-sizing: border-box;
 }
@@ -410,8 +447,7 @@ button.sub {
 .header {
   display: flex;
   justify-content: space-between;
-  margin-top: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 3px;
 
   div {
     display: flex;
@@ -449,11 +485,10 @@ button.sub {
 
 .filter-button {
   padding: 5px 10px;
-  font-size: 13px;
 }
 
 .filter-button.active {
-  background: #ff9800;
+  background: var(--color-signature);
   color:#fff;
 }
 
@@ -468,29 +503,13 @@ button.sub {
 /* Text Styles */
 .text-muted {
   color: #666;
-  font-size: 14px;
-}
-
-.text-small {
-  font-size: 12px;
-}
-
-.text-medium {
-  font-size: 14px;
-}
-
-.text-large {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.text-time {
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
 }
 
 /* Spacing Utilities */
+.mt-5 {
+  margin-top: 5px;
+}
+
 .mt-8 {
   margin-top: 8px;
 }
@@ -525,28 +544,21 @@ button.sub {
 
 /* Highlight Styles */
 .highlight-badge {
-  background: #f0f0f0;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 14px;
+  padding: 0 4px;
 }
 
 /* Expense Specific */
 .expense-amount {
-  margin: 4px 0;
-  font-size: 16px;
-  font-weight: bold;
+  margin: 0;
 }
 
 .expense-detail {
   margin: 4px 0;
-  font-size: 12px;
   color: #666;
 }
 
 .currency-info {
   margin-left: 5px;
-  font-size: 14px;
   opacity: 80%;
 }
 
@@ -554,31 +566,26 @@ button.sub {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
 }
 
 .stats-item-label {
-  margin: 4px 0;
-  font-size: 14px;
-  color: #666;
+  margin: 2px 0;
 }
 
 .stats-item-value {
-  margin: 4px 0;
-  font-size: 20px;
-  font-weight: bold;
+  margin: 4px 0 4px 4px;
 }
 
-.stats-item-value.orange {
-  color: #ff9800;
+.stats-item-value.prepaid {
+  color: var(--color-prepaid);
 }
 
-.stats-item-value.green {
-  color: #4caf50;
+.stats-item-value.paid {
+  color: var(--color-paid);
 }
 
-.stats-item-value.gray {
-  color: #666;
+.stats-item-value.scheduled {
+  color: var(--color-scheduled);
 }
 /* Category & Word Styles */
 .category-list {
@@ -589,19 +596,17 @@ button.sub {
 }
 
 .category-item {
+  display: flex;
+  gap: 8px;
   padding: 8px 12px;
   background: #f0f0f0;
   border-radius: 8px;
-  display: flex;
-  gap: 8px;
   align-items: center;
-  font-size: 12px;
 }
 
 .category-edit-btn,
 .category-delete-btn {
   padding: 0px 4px;
-  font-size: 11px;
   height: auto;
   background: transparent;
   border: none;
@@ -639,7 +644,6 @@ button.sub {
 .modal-content label {
   display: block;
   margin-bottom: 4px;
-  font-size: 14px;
 }
 
 .modal-content .modal-item-box {
@@ -647,7 +651,6 @@ button.sub {
 }
 
 .modal-content .modal-item-box p {
-  font-size: 12px;
   color: #666;
   margin: 4px 0;
 }
@@ -655,25 +658,22 @@ button.sub {
 .modal-content .chip-button {
   flex: 1;
   padding: 5px 10px;
-  font-size: 13px;
   border-radius: 8px;
   cursor: pointer;
 
   background: #f0f0f0;
-  color: #000;
-  border: 2px solid #ddd;
-  font-weight: normal;
+  color: var(--color-black);
+  border: 0;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
 }
 
 .modal-content .chip-button.active {
   background: #f5f5ac;
-  border: 2px solid #f5f5ac;
 }
 
 .modal-content .flex-box {
   display: flex;
   gap: 8px;
-  font-size: 13px;
 }
 
 .modal-content .flex-box label {
@@ -709,8 +709,7 @@ button.sub {
 }
 
 .category-empty-msg {
-  font-size: 12px;
-  color: #999;
+  color: var(--color-mute);
   margin: 0;
   margin-bottom: 12px;
 }
@@ -726,10 +725,10 @@ button.sub {
   text-align: left;
   padding: 8px 12px;
   background: #fff;
-  border: 2px solid #000;
+  border: 0;
   border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   cursor: pointer;
-  font-size: 16px;
   box-sizing: border-box;
 }
 
@@ -739,52 +738,53 @@ button.sub {
   left: 0;
   right: 0;
   background: #fff;
-  border: 2px solid #000;
+  border: 0;
   border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   padding: 16px;
   margin-top: 4px;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .time-picker-select {
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 0;
   border-radius: 4px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   min-width: max-content;
   text-align: center;
-  font-size: 16px;
-  font-weight: bold;
 }
 
 .time-picker-pick-button {
-  width: 32px;
-  height: 32px;
+  width: 20px;
+  height: 10px;
   background: #f5f5f5;
-  border: 1px solid #ddd;
+  border: 0;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   border-radius: 4px;
   cursor: pointer;
   margin-bottom: 4px;
   display: block;
   margin: 0 auto 4px;
   padding: 0 5px;
+  font-size: var(--font-mini);
 }
 
 .time-picker-button {
   padding: 6px 12px;
-  background: #f5f5f5;
-  border: 1px solid #ddd;
+  border: 0px;
   border-radius: 4px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   cursor: pointer;
-  font-size: 12px;
   flex: 1;
   min-width: max-content;
+  color: var(--color-gray);
 }
 
 .time-picker-button.save {
-  background: #6fb36e;
-  color: #fff;
-  border: 1px solid #6fb36e;
+  color: var(--color-signature);
+  border: 0;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
 }
 
 /* Word Modal Styles */
@@ -797,24 +797,21 @@ button.sub {
 }
 
 .word-detail-label {
-  font-size: 12px;
-  color: #666;
+  font-size: var(--font-mini);
+  color: var(--color-mute);
   margin: 0 0 8px 0;
-  font-weight: 500;
   text-transform: uppercase;
 }
 
 .word-detail-value {
-  font-size: 16px;
-  color: #000;
+  color: var(--color-black);
   margin: 0;
   word-break: break-word;
   white-space: pre-wrap;
 }
 
 .word-memo {
-  font-size: 14px;
-  color: #555;
+  color: var(--color-gray);
   line-height: 1.4;
 }
 
@@ -843,7 +840,8 @@ button.sub {
 .gallery-item {
   position: relative;
   background: #fff;
-  border: 2px solid #000;
+  border: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   border-radius: 12px;
   overflow: hidden;
   aspect-ratio: 1;
@@ -878,7 +876,6 @@ button.sub {
   justify-content: center;
   background: #f5f5f5;
   color: #ccc;
-  font-size: 24px;
 }
 
 .gallery-info {
@@ -889,8 +886,7 @@ button.sub {
 }
 
 .gallery-memo {
-  font-size: 12px;
-  color: #333;
+  color: var(--color-gray);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -911,7 +907,6 @@ button.sub {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
   padding: 0;
   z-index: 10;
 }
@@ -921,10 +916,10 @@ button.sub {
   top: 32px;
   right: 0;
   background: #fff;
-  border: 2px solid #000;
+  border: 0;
   border-radius: 8px;
-  min-width: 100px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 100px;
   z-index: 20;
   overflow: hidden;
 }
@@ -937,7 +932,6 @@ button.sub {
   background: #fff;
   cursor: pointer;
   text-align: left;
-  font-size: 12px;
   border-bottom: 1px solid #eee;
 }
 
@@ -965,18 +959,17 @@ button.sub {
 .gallery-empty {
   text-align: center;
   padding: 40px 16px;
-  color: #999;
+  color: var(--color-mute);
 }
 
 .gallery-empty p {
-  font-size: 14px;
   margin: 8px 0;
 }
 
 .gallery-loading {
   text-align: center;
   padding: 40px 16px;
-  color: #999;
+  color: var(--color-mute);
 }
 
 /* Gallery Modal Styles */
@@ -988,8 +981,9 @@ button.sub {
   width: 100%;
   aspect-ratio: 1;
   background: #f5f5f5;
-  border: 2px solid #000;
+  border: 0px;
   border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   overflow: hidden;
   margin-bottom: 16px;
   display: flex;
@@ -1011,12 +1005,10 @@ button.sub {
   align-items: center;
   justify-content: center;
   color: #ccc;
-  font-size: 32px;
 }
 
 .gallery-preview-placeholder p {
   margin: 8px 0 0 0;
-  font-size: 12px;
 }
 
 .gallery-file-input-wrapper {
@@ -1032,11 +1024,11 @@ button.sub {
   flex: 1;
   padding: 12px;
   background: #fff;
-  border: 2px solid #000;
+  border: 0;
   border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   cursor: pointer;
   text-align: center;
-  font-weight: bold;
   transition: background 0.2s;
 }
 
@@ -1048,9 +1040,9 @@ button.sub {
   width: 100%;
   margin-bottom: 16px;
   padding: 8px;
-  border: 2px solid #000;
+  border: 0;
   border-radius: 8px;
-  font-family: Pretendard, sans-serif;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   resize: vertical;
 }
 
@@ -1063,7 +1055,8 @@ button.sub {
   width: 100%;
   margin-bottom: 16px;
   background: #f5f5f5;
-  border: 2px solid #000;
+  border: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -1079,8 +1072,7 @@ button.sub {
 }
 
 .gallery-detail-memo {
-  font-size: 14px;
-  color: #333;
+  color: var(--color-gray);
   margin: 0;
   white-space: pre-wrap;
   word-break: break-word;
@@ -1089,7 +1081,6 @@ button.sub {
 
 .gallery-detail-date {
   text-align: center;
-  font-size: 12px;
-  color: #999;
+  color: var(--color-mute);
   margin-bottom: 16px;
 }

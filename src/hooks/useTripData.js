@@ -150,6 +150,8 @@ export function useTripData(tripId, userId) {
       .from('categories')
       .select('*')
       .eq('user_id', userId)
+      .order('display_order', { ascending: true, nullsFirst: true })
+      .order('name', { ascending: true })
   
     if (error) {
       console.error('expense categories fetch error', error)
@@ -218,12 +220,6 @@ export function useTripData(tripId, userId) {
       data.forEach(rate => {
         ratesMap[rate.currency] = rate
       })
-    } else {
-      // 기본 환율 설정
-      ratesMap.USD = { currency: 'USD', rate_to_krw: 1300 }
-      ratesMap.JPY = { currency: 'JPY', rate_to_krw: 9 }
-      ratesMap.EUR = { currency: 'EUR', rate_to_krw: 1400 }
-      ratesMap.CNY = { currency: 'CNY', rate_to_krw: 180 }
     }
     
     setExchangeRates(ratesMap)

@@ -39,6 +39,8 @@ export default function SortablePackingItem({ item, category, onToggle, onDelete
           checked={item.is_done}
           onChange={() => onToggle(item.id, item.is_done)}
           onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
           id={item.id}
         />
         <div style={{ flex: 1 }}>
@@ -61,6 +63,7 @@ export default function SortablePackingItem({ item, category, onToggle, onDelete
         <div 
           className="dropdown-container"
           onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation()
             setShowMenu(!showMenu)

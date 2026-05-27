@@ -4,7 +4,7 @@ import Modal from '../../ui/Modal'
 import PlaceSearch from './PlaceSearch'
 import TimePicker from './TimePicker'
 
-export default function ScheduleModal({ tripId, schedule = null, categories = [], onClose }) {
+export default function ScheduleModal({ tripId, schedule = null, categories = [], onClose, onAddExpense }) {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
@@ -49,10 +49,10 @@ export default function ScheduleModal({ tripId, schedule = null, categories = []
     }
   }, [schedule])
 
-  const save = async () => {
+  const doSave = async () => {
     if (!title || !date) {
       alert('제목과 날짜를 입력해주세요.')
-      return
+      return false
     }
 
     let timeValue = ''
@@ -79,31 +79,30 @@ export default function ScheduleModal({ tripId, schedule = null, categories = []
     }
 
     if (schedule) {
-      // 수정
       const { error } = await supabase
         .from('schedules')
         .update(scheduleData)
         .eq('id', schedule.id)
-      
       if (error) {
         console.error('update error', error)
         alert('일정 수정에 실패했습니다.')
-        return
+        return false
       }
     } else {
-      // 생성
       const { error } = await supabase
         .from('schedules')
         .insert(scheduleData)
-      
       if (error) {
         console.error('insert error', error)
         alert('일정 추가에 실패했습니다.')
-        return
+        return false
       }
     }
+    return true
+  }
 
-    onClose()
+  const save = async () => {
+    if (await doSave()) onClose()
   }
 
   return (
@@ -193,12 +192,24 @@ export default function ScheduleModal({ tripId, schedule = null, categories = []
           />
 
           <div style={{ marginBottom: 12 }}>
-            <button 
-              onClick={() => setShowPlaceSearch(true)}
-              style={{ padding: '8px 12px', marginBottom: 8 }}
-            >
-              {selectedPlace ? '장소 수정' : '장소 등록'}
-            </button>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+              <button 
+                onClick={() => setShowPlaceSearch(true)}
+                style={{ padding: '8px 12px' }}
+              >
+                {selectedPlace ? '장소 수정' : '장소 등록'}
+              </button>
+              {onAddExpense && (
+                <button
+                  onClick={async () => {
+                    if (await doSave()) onAddExpense({ title, date, category, memo, memo2 })
+                  }}
+                  style={{ padding: '8px 12px' }}
+                >
+                  비용 추가
+                </button>
+              )}
+            </div>
 
             {selectedPlace && (
               <p>

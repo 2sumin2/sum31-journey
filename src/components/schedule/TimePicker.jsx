@@ -61,6 +61,18 @@ export default function TimePicker({ value, onChange, placeholder = '시간 선�
     handleChange(hour, newMinuteStr)
   }
 
+  const setNow = () => {
+    const now = new Date()
+
+    const currentHour = String(now.getHours()).padStart(2, '0')
+    const currentMinute = String(now.getMinutes()).padStart(2, '0')
+
+    setHour(currentHour)
+    setMinute(currentMinute)
+
+    handleChange(currentHour, currentMinute)
+  }
+
   const toggleMinuteStep = () => {
     setMinuteStep(minuteStep === 1 ? 15 : 1)
   }
@@ -142,12 +154,19 @@ export default function TimePicker({ value, onChange, placeholder = '시간 선�
 
           {/* 분 단위 토글 및 완료 버튼 */}
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-            <button
+            {/* <button
               className="time-picker-button"
               type="button"
               onClick={toggleMinuteStep}
             >
               {minuteStep === 1 ? '1분' : '15분'}
+            </button> */}
+            <button
+              className="time-picker-button"
+              type="button"
+              onClick={setNow}
+            >
+              현재시간
             </button>
             <button
               className="time-picker-button save"

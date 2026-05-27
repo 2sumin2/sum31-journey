@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useUser } from '../contexts/UserContext'
 import { useTripData } from '../hooks/useTripData'
 import { useSchedule } from '../hooks/useSchedule'
@@ -84,6 +84,9 @@ export default function Trip() {
     getFilteredExpenses
   } = useExpense(expenses, fetchExpenses)
 
+  // 일정에서 비용 추가 시 pending 처리
+  const pendingExpense = useRef(null)
+
   // 단어장 상태
   const [wordsOpen, setWordsOpen] = useState(false)
   const [editingWords, setEditingWords] = useState(null)
@@ -93,14 +96,35 @@ export default function Trip() {
   // 페이지 이동 시 모든 모달 닫기
   useEffect(() => {
     setOpen(false)
-    setExpenseOpen(false)
     setWordsOpen(false)
     setWordCategoriesOpen(false)
     setEditingSchedule(null)
-    setEditingExpense(null)
     setEditingWords(null)
     setEditingWordCategories(null)
+    if (pendingExpense.current) {
+      const prefilled = pendingExpense.current
+      pendingExpense.current = null
+      setEditingExpense(prefilled)
+      setExpenseOpen(true)
+    } else {
+      setExpenseOpen(false)
+      setEditingExpense(null)
+    }
   }, [location.pathname])
+
+  // 일정 팝업에서 비용 추가 버튼 클릭 시 처리
+  const handleAddExpenseFromSchedule = (scheduleData) => {
+    const matchedCategory = categories.find(c => c.name === scheduleData.category)
+    const matchedDay = tripDays.find(d => d.date === scheduleData.date)
+    pendingExpense.current = {
+      title: scheduleData.title,
+      category_id: matchedCategory?.id || '',
+      trip_day_id: matchedDay?.id || '',
+      memo: scheduleData.memo,
+      memo2: scheduleData.memo2,
+    }
+    navigate(`/trip/${id}/expense`)
+  }
 
   // 현재 탭 결정 (라우팅 기반)
   const getCurrentTab = () => {
@@ -212,6 +236,7 @@ export default function Trip() {
             tripId={id}
             schedule={editingSchedule}
             categories={categories}
+            onAddExpense={handleAddExpenseFromSchedule}
             onClose={() => {
               setOpen(false)
               setEditingSchedule(null)

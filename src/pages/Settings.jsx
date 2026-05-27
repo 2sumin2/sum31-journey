@@ -19,6 +19,14 @@ export default function Settings() {
   const [bgColor, setBgColor] = useState('#000000')
   const [textColor, setTextColor] = useState('#ffffff')
 
+  const CURRENCIES = [
+    { code: 'USD', label: 'USD (달러)' },
+    { code: 'JPY', label: 'JPY (엔)' },
+    { code: 'EUR', label: 'EUR (유로)' },
+    { code: 'CNY', label: 'CNY (위안)' },
+  ]
+  const [rateInputs, setRateInputs] = useState({ USD: '', JPY: '', EUR: '', CNY: '' })
+
   const sensors = useSensors(
     // PC
     useSensor(PointerSensor, {
@@ -62,6 +70,51 @@ export default function Settings() {
       fetchCategories()
     }
   }, [userId, id]);
+
+  // 환율 가져오기
+  const fetchExchangeRates = async () => {
+    if (!userId) return
+    const { data, error } = await supabase
+      .from('exchange_rates')
+      .select('*')
+      .eq('user_id', userId)
+    if (error) { console.error('exchange rates fetch error', error); return }
+    if (data && data.length > 0) {
+      const inputs = { USD: '', JPY: '', EUR: '', CNY: '' }
+      data.forEach(r => {
+        if (Object.prototype.hasOwnProperty.call(inputs, r.currency)) {
+          inputs[r.currency] = r.rate_to_krw.toString()
+        }
+      })
+      setRateInputs(inputs)
+    }
+  }
+
+  useEffect(() => {
+    if (userId) fetchExchangeRates()
+  }, [userId])
+
+  const saveExchangeRates = async () => {
+    if (!userId) return
+    const currencies = CURRENCIES.filter(c => rateInputs[c.code] !== '' && !isNaN(parseFloat(rateInputs[c.code])))
+    if (currencies.length === 0) { alert('저장할 환율이 없습니다.'); return }
+
+    for (const { code } of currencies) {
+      const rate = parseFloat(rateInputs[code])
+      const { data } = await supabase
+        .from('exchange_rates')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('currency', code)
+        .maybeSingle()
+      if (data) {
+        await supabase.from('exchange_rates').update({ rate_to_krw: rate }).eq('id', data.id)
+      } else {
+        await supabase.from('exchange_rates').insert({ user_id: userId, currency: code, rate_to_krw: rate })
+      }
+    }
+    alert('환율이 저장되었습니다.')
+  }
 
   // 드래그 앤 드롭 핸들러
   const handleDragEnd = async (event) => {
@@ -221,6 +274,31 @@ export default function Settings() {
             카테고리를 추가해주세요.
           </p>
         )}
+      </div>
+
+      {/* 환율 설정 */}
+      <div style={{ marginTop: 32 }}>
+        <h3>환율 설정</h3>
+        <p style={{ color: '#666', fontSize: 14, marginBottom: 16 }}>
+          비용 추가 시 자동으로 적용되는 환율입니다. (1 외화 = ? 원)
+        </p>
+        {CURRENCIES.map(({ code, label }) => (
+          <div key={code} className="card card-content mb-12" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontWeight: 500, minWidth: 110 }}>{label}</span>
+            <input
+              className="input"
+              type="number"
+              placeholder="원화 환율"
+              value={rateInputs[code]}
+              onChange={e => setRateInputs(prev => ({ ...prev, [code]: e.target.value }))}
+              style={{ flex: 1, marginBottom: 0 }}
+            />
+            <span style={{ fontSize: 14, color: '#666', whiteSpace: 'nowrap' }}>원</span>
+          </div>
+        ))}
+        <button className="main" onClick={saveExchangeRates} style={{ width: '100%', marginTop: 8 }}>
+          환율 저장
+        </button>
       </div>
 
       {/* 카테고리 추가/수정 모달 */}

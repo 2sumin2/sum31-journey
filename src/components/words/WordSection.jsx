@@ -87,20 +87,27 @@ export default function WordSection({ tripId, categories, wordsOpen, editingWord
     const { active, over } = event
     if (!over || active.id === over.id) return
 
-    const oldIndex = words.findIndex(w => w.id === active.id)
-    const newIndex = words.findIndex(w => w.id === over.id)
+    const oldIndex = filteredWords.findIndex(w => w.id === active.id)
+    const newIndex = filteredWords.findIndex(w => w.id === over.id)
 
     if (oldIndex === -1 || newIndex === -1) return
 
-    const newWords = arrayMove(words, oldIndex, newIndex)
+    const newFilteredOrder = arrayMove(filteredWords, oldIndex, newIndex)
+    setFilteredWords(newFilteredOrder)
+
+    // 필터된 단어들의 새 순서를 전체 배열에 병합 (숨겨진 단어 순서 유지)
+    const filteredIds = new Set(filteredWords.map(w => w.id))
+    let filteredIdx = 0
+    const newWords = words.map(word =>
+      filteredIds.has(word.id) ? newFilteredOrder[filteredIdx++] : word
+    )
     setWords(newWords)
-    setFilteredWords(newWords)
 
     // 모든 업데이트를 병렬로 실행하고 완료 대기
     const updatePromises = newWords.map((w, index) =>
       supabase.from('words').update({ display_order: index }).eq('id', w.id)
     )
-    
+
     // 모든 업데이트가 완료된 후에만 완료
     await Promise.all(updatePromises)
   }

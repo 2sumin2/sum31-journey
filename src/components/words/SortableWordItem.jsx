@@ -1,9 +1,10 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 export default function SortableWordItem({ word, categories = [], onDelete, onUpdate, onEdit, onView, wordsOpen, editingWords }) {
   const [showMenu, setShowMenu] = useState(false)
+  const pointerDownPos = useRef(null)
   const {
     attributes,
     listeners,
@@ -24,10 +25,14 @@ export default function SortableWordItem({ word, categories = [], onDelete, onUp
   const category = categories.find(c => c.id === word.category_id)
 
   const handleCardClick = (e) => {
-    // 드래그 핸들러나 메뉴 버튼이 아닌 경우에만 상세보기
-    if (!e.defaultPrevented && e.target.closest('.dropdown-container') === null) {
-      onView && onView(word)
+    if (e.target.closest('.dropdown-container') !== null) return
+    // 드래그 중 발생하는 클릭 무시 (이동 거리 5px 초과 시)
+    if (pointerDownPos.current) {
+      const dx = e.clientX - pointerDownPos.current.x
+      const dy = e.clientY - pointerDownPos.current.y
+      if (Math.sqrt(dx * dx + dy * dy) > 5) return
     }
+    onView && onView(word)
   }
 
   return (
@@ -40,6 +45,12 @@ export default function SortableWordItem({ word, categories = [], onDelete, onUp
         cursor: 'grab',
       }}
       {...listeners}
+      onPointerDown={(e) => {
+        if (e.target.closest('.dropdown-container') === null) {
+          pointerDownPos.current = { x: e.clientX, y: e.clientY }
+        }
+        listeners.onPointerDown?.(e)
+      }}
       onClick={handleCardClick}
     >
       <div className="card-content">
@@ -54,7 +65,7 @@ export default function SortableWordItem({ word, categories = [], onDelete, onUp
               </span>
             )}
           </div>
-          <span style={{ fontSize: 14, color: '#555', marginTop: 4, display: 'block' }}>{word.korean}</span>
+          <span style={{ fontSize: 13, color: '#555', marginTop: 4, display: 'block' }}>{word.korean}</span>
           <div className="memo-box">
             {word.memo && (
               <p className="text-small text-muted" style={{ margin: '4px 0 0 0' }}>
@@ -66,6 +77,7 @@ export default function SortableWordItem({ word, categories = [], onDelete, onUp
         <div 
           className="dropdown-container"
           onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation()
             setShowMenu(!showMenu)

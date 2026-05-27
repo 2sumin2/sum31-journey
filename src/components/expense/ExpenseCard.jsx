@@ -55,7 +55,7 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
               )}
             </div>
           )}
-          <div className="mt-8">
+          <div className="mt-5">
             <p className="expense-amount">
               {formatCurrency(expense.total_amount_krw, 'KRW')}
               <span className='currency-info'>
@@ -72,6 +72,7 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
         <div 
           className="dropdown-container"
           onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation()
             setShowMenu(!showMenu)

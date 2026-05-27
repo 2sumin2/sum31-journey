@@ -10,7 +10,6 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
   const [currency, setCurrency] = useState('KRW')
   const [unitAmount, setUnitAmount] = useState('')
   const [quantity, setQuantity] = useState(1)
-  const [exchangeRate, setExchangeRate] = useState('')
   const [totalAmountKrw, setTotalAmountKrw] = useState('')
   const [paymentStatus, setPaymentStatus] = useState('planned')
   const [isPrepaid, setIsPrepaid] = useState(false)
@@ -30,7 +29,6 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
       setCurrency(expense.currency || 'KRW')
       setUnitAmount(expense.unit_amount?.toString() || '')
       setQuantity(expense.quantity || 1)
-      setExchangeRate(expense.exchange_rate?.toString() || '')
       setTotalAmountKrw(expense.total_amount_krw?.toString() || '')
       setPaymentStatus(expense.payment_status || 'planned')
       setIsPrepaid(expense.is_prepaid || false)
@@ -51,29 +49,14 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
 
   // 환율 적용 계산
   useEffect(() => {
-    if (unitAmount && currency && exchangeRates[currency]) {
-      let rate = exchangeRate || exchangeRates[currency].rate_to_krw
-      
-      // 로컬 스토리지에 저장된 환율 확인
-      if (!exchangeRate) {
-        const savedRate = localStorage.getItem(`exchangeRate_${currency}`)
-        if (savedRate) {
-          rate = parseFloat(savedRate)
-          setExchangeRate(rate.toString())
-        } else {
-          rate = exchangeRates[currency].rate_to_krw
-          setExchangeRate(rate.toString())
-        }
-      }
-      
-      const total = parseFloat(unitAmount) * quantity * rate
-      setTotalAmountKrw(total.toFixed(2))
-    } else if (currency === 'KRW' && unitAmount) {
-      const total = parseFloat(unitAmount) * quantity
-      setTotalAmountKrw(total.toFixed(2))
-      setExchangeRate('1')
+    if (!unitAmount) {
+      setTotalAmountKrw('')
+      return
     }
-  }, [unitAmount, quantity, currency, exchangeRates, exchangeRate])
+    const rate = currency === 'KRW' ? 1 : (exchangeRates[currency]?.rate_to_krw || 1)
+    const total = parseFloat(unitAmount) * (parseInt(quantity) || 1) * rate
+    setTotalAmountKrw(total.toFixed(2))
+  }, [unitAmount, quantity, currency, exchangeRates])
 
   const save = async () => {
     if (!title || !categoryId) {
@@ -81,10 +64,7 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
       return
     }
 
-    // 환율 저장
-    if (exchangeRate && currency !== 'KRW') {
-      localStorage.setItem(`exchangeRate_${currency}`, exchangeRate)
-    }
+    const rate = currency === 'KRW' ? 1 : (exchangeRates[currency]?.rate_to_krw || 1)
 
     const expenseData = {
       trip_id: tripId,
@@ -95,7 +75,7 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
       currency,
       unit_amount: parseFloat(unitAmount),
       quantity: quantity || 1,
-      exchange_rate: parseFloat(exchangeRate) || 1,
+      exchange_rate: rate,
       total_amount_krw: parseFloat(totalAmountKrw) || 0,
       payment_status: paymentStatus,
       is_prepaid: isPrepaid,
@@ -107,7 +87,7 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
       is_card: isCard
     }
 
-    if (expense) {
+    if (expense?.id) {
       const { error } = await supabase
         .from('expenses')
         .update(expenseData)
@@ -232,16 +212,14 @@ export default function ExpenseModal({ tripId, tripDays = [], expense = null, ca
 
         {currency !== 'KRW' && (
           <div className='modal-item-box'>
-            <input
-              className="input"
-              type="number"
-              placeholder="환율 (자동 적용)"
-              value={exchangeRate}
-              onChange={e => setExchangeRate(e.target.value)}
-            />
-            <p>
-              총액 (원화): {parseFloat(totalAmountKrw || 0).toLocaleString()}원
+            <p style={{ margin: 0, fontSize: 13, color: '#666' }}>
+              적용 환율: 1 {currency} = {exchangeRates[currency]?.rate_to_krw?.toLocaleString() ?? '-'}원
             </p>
+            {totalAmountKrw && (
+              <p style={{ margin: '4px 0 0 0' }}>
+                총액 (원화): {parseFloat(totalAmountKrw).toLocaleString()}원
+              </p>
+            )}
           </div>
         )}
 

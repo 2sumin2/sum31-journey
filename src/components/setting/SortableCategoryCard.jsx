@@ -37,20 +37,18 @@ export default function SortableCategoryCard({ category, onEdit, onDelete }) {
             padding: '6px 12px',
             borderRadius: 8,
             fontSize: 14,
-            fontWeight: 500,
             minWidth: 80,
             textAlign: 'center'
           }}
         >
           {category.name}
         </span>
-        <div className="text-small text-muted">
-          배경: <span style={{ color: category.bg_color || '#000000' }}>■</span>
-          {' / '}
-          글자: <span style={{ color: category.text_color || '#ffffff' }}>■</span>
-        </div>
       </div>
-      <div className="flex-row" onClick={(e) => e.stopPropagation()}>
+      <div className="flex-row"
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+      >
         <button className="button-secondary button-small" onClick={onEdit}>
           수정
         </button>

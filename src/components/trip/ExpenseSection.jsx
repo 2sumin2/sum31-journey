@@ -56,31 +56,34 @@ export default function ExpenseSection({
 
       {/* 비용 통계 */}
       <div className="card mb-16">
-        <h3 style={{ marginTop: 0 }}>비용 요약</h3>
         <div className="stats-grid">
           <div>
-            <p className="stats-item-label">총액</p>
-            <p className="stats-item-value">
-              {stats.total.toLocaleString()}원
-            </p>
+            <div className="stats-item-label">총액: 
+              <span className="stats-item-value">
+                {Math.floor(stats.total).toLocaleString()}원
+              </span>
+            </div>
           </div>
           <div>
-            <p className="stats-item-label">사전 결제액</p>
-            <p className="stats-item-value orange">
-              {stats.prepaid.toLocaleString()}원
-            </p>
+            <div className="stats-item-label">사전 결제액: 
+              <span className="stats-item-value prepaid">
+                {Math.floor(stats.prepaid).toLocaleString()}원
+              </span>
+            </div>
           </div>
           <div>
-            <p className="stats-item-label">결제 완료</p>
-            <p className="stats-item-value green">
-              {stats.paid.toLocaleString()}원
-            </p>
+            <div className="stats-item-label">결제 완료: 
+              <span className="stats-item-value paid">
+                {Math.floor(stats.paid).toLocaleString()}원
+              </span>
+            </div>
           </div>
           <div>
-            <p className="stats-item-label">결제 예정</p>
-            <p className="stats-item-value gray">
-              {stats.planned.toLocaleString()}원
-            </p>
+            <div className="stats-item-label">결제 예정: 
+              <span className="stats-item-value scheduled">
+                {Math.floor(stats.planned).toLocaleString()}원
+              </span>
+            </div>
           </div>
         </div>
       </div>

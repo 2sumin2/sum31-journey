@@ -14,13 +14,15 @@ export default function GalleryDetailModal({ gallery, onClose }) {
     <Modal open={true} onClose={onClose} title="갤러리 상세">
       <div className="gallery-detail-content">
         {gallery.image_url && (
-          <div className="gallery-detail-image-container">
-            <img
-              src={getImageUrl(gallery.image_url)}
-              alt="갤러리"
-              className="gallery-detail-image"
-            />
-          </div>
+          <a href={gallery.image_url}>
+            <div className="gallery-detail-image-container">
+              <img
+                src={getImageUrl(gallery.image_url)}
+                alt="갤러리"
+                className="gallery-detail-image"
+              />
+            </div>
+          </a>
         )}
 
         {gallery.memo && (
