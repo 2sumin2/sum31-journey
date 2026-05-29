@@ -42,7 +42,7 @@ export default function ScheduleCard({ schedule, showMemo = true, onClick, onEdi
             </span>
           )}
           {!showMemo && schedule.memo && (
-            <p className="card-memo" style={{ color: category?.text_color || '#fff' }}>
+            <p className="card-memo">
               {schedule.memo}
             </p>
           )}

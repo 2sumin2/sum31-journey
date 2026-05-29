@@ -69,7 +69,7 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
             </p>
           </div>
           {!showExpenseSimple && expense.memo && (
-            <p className="card-memo" style={{ color: category?.text_color || '#666' }}>
+            <p className="card-memo">
               {expense.memo}
             </p>
           )}
