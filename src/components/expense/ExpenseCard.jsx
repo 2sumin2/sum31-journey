@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 export default function ExpenseCard({ expense, category, onEdit, onDelete, onClick, dragListeners, showExpenseSimple }) {
   const [showMenu, setShowMenu] = useState(false)
+  const bgColor = category?.bg_color || '#ffffff'
+  const textColor = category?.text_color || '#000000'
 
   const formatCurrency = (amount, currency) => {
     return new Intl.NumberFormat('ko-KR').format(amount) + (currency === 'KRW' ? '원' : ` ${currency}`)
@@ -25,8 +27,7 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
     <div
       className={`card`}
       style={{
-        background: category?.bg_color || '#fff',
-        color: category?.text_color || '#000'
+        borderLeft: `5px solid ${category?.bg_color || '#e5e7eb'}`,
       }}
       onClick={onClick}
       {...dragListeners}
@@ -38,13 +39,17 @@ export default function ExpenseCard({ expense, category, onEdit, onDelete, onCli
           </div>
           {!showExpenseSimple && (
             <div className="badge-box">
-              {getStatusBadge(expense.payment_status)}
-
               {category && (
-                <span className="badge category-badge">
+                <span className="badge category-badge"
+                  style={{
+                    background: bgColor,
+                    color: textColor
+                  }}>
                   {category.name}
                 </span>
               )}
+              
+              {getStatusBadge(expense.payment_status)}
 
               {expense.is_cash && (
                 <span className="badge cash-badge is-cash">현금</span>

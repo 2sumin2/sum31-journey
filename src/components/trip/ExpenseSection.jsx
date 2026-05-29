@@ -66,21 +66,21 @@ export default function ExpenseSection({
           </div>
           <div>
             <div className="stats-item-label">사전 결제액: 
-              <span className="stats-item-value prepaid">
+              <span className="stats-item-value">
                 {Math.floor(stats.prepaid).toLocaleString()}원
               </span>
             </div>
           </div>
           <div>
             <div className="stats-item-label">결제 완료: 
-              <span className="stats-item-value paid">
+              <span className="stats-item-value">
                 {Math.floor(stats.paid).toLocaleString()}원
               </span>
             </div>
           </div>
           <div>
             <div className="stats-item-label">결제 예정: 
-              <span className="stats-item-value scheduled">
+              <span className="stats-item-value">
                 {Math.floor(stats.planned).toLocaleString()}원
               </span>
             </div>

@@ -19,8 +19,7 @@ export default function ScheduleCard({ schedule, showMemo = true, onClick, onEdi
       className="card card-clickable"
       onClick={onClick}
       style={{
-        background: bgColor,
-        color: textColor
+        borderLeft: `5px solid ${category?.bg_color || '#e5e7eb'}`,
       }}
     >
       <div className="card-content">
@@ -34,7 +33,11 @@ export default function ScheduleCard({ schedule, showMemo = true, onClick, onEdi
             <h4 className="card-title">{schedule.title}</h4>
           </div>
           {!showMemo && schedule.category && (
-            <span className="category-tag">
+            <span className="category-tag"
+              style={{
+                background: bgColor,
+                color: textColor
+              }}>
               {schedule.category}
             </span>
           )}

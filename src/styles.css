@@ -16,12 +16,12 @@
   --color-signature: #FF7FA3;
   --color-del: #FF6B6B;
 
-  --color-card: #d7f9ff;
-  --color-cash: #ffd7d7;
+  --color-card: #DCEEF2;
+  --color-cash: #F4DDDF;
 
-  --color-prepaid: #B794F4;
-  --color-paid: #48BB78;
-  --color-scheduled: #63B3ED;
+  --color-prepaid: #D9CDEE;
+  --color-paid: #CFE3D2;
+  --color-scheduled: #E3E8F2;
 }
 
 body {
@@ -118,7 +118,6 @@ p {
 
 .status-badge {
   background: var(--color-mute);
-  color: #fff;
   padding: 2px 8px;
   border-radius: 12px;
   font-size: var(--font-tag);
@@ -127,7 +126,7 @@ p {
 }
 
 .status-badge.planned {
-  background: var(--color-mute);
+  background: var(--color-scheduled);
 }
 
 .status-badge.paid {
